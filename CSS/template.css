@@ -1,0 +1,50 @@
+body{
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+nav{
+  padding: 20px;
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  
+  nav ul li {
+    float: left;
+  }
+  
+  nav ul li a {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    text-decoration: none;
+  }
+  
+  /* Change the link color to #111 (black) on hover */
+  nav ul li a:hover {
+    background-color: #f34545;
+    color: #fff;
+    font-weight: 800;
+  }
+
+  footer {
+    background-color: #fff;
+    padding: 10px;
+    margin: 20px;
+    text-align: center;
+    color: #333;
+    margin-top: auto;
+  }
+  footer .credite a{
+    color: #f34545;
+  }
+  .container{
+    margin-left: 30px;
+  }
