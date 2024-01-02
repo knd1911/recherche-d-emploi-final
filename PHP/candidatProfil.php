@@ -38,7 +38,9 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
     
     <div style="border-bottom: 1px solid #ccc;"></div>
     <div class="bottom">
-    <form id="formFormation" style="background-color: #ccc;" method="post">
+    <h3>Formation</h3>
+
+    <form id="formFormation" style="background-color: #ccc;  border-radius: 10px; padding:10px;" method="post">
     <div class="formation-container">
         <div>
         <p class="titre">Titre:</p>
@@ -57,10 +59,12 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
         </p>
         </div>
 
-        <p class="">Description:</p>
+        <p class="titre">Description:</p>
         <textarea name="description[]"></textarea>
 
-        <button type="button" onclick="supprimerFormation(this)">Supprimer</button>
+        <div class="supression">
+            <button type="button" onclick="supprimerFormation(this)">Supprimer</button>
+        </div>
     </div>
 
     <button type="button" class="ajouter-formation-button" onclick="ajouterFormation()">Ajouter Formation</button>
@@ -81,6 +85,7 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
         </div>
 </div>
 <style>
+    .
     .radio{
         font-size: 20px;
         background-color: #f34545;
@@ -145,7 +150,15 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
     textarea{
         width: 90%;
         height: 100px;
-        margin: 20px;
+        background-color: rgba(255, 255, 255, .8);
+    padding: 15px;
+    outline: none;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0, .1);
+    margin-left: 20px;
+    font-size: 20px;
+    border-radius: 10px;
+    opacity: .6;
     }
     .titre{
         margin: 25px;
