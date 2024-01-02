@@ -1,7 +1,16 @@
 <?php 
-    ob_start();
+ 
+ $serveur = "localhost"; 
+ $nomUtilisateur = "test";
+ $motDePasse = "MyP@ssw0rd123";
+ $nomBaseDeDonnees = "emploi";
+ 
+ $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees);
 
-require_once 'PHP/triatement/metierSelect.php';
+ $rg = mysqli_query($conn, 'SELECT * from zone_geo');
+ $sql = mysqli_query($conn, 'SELECT * from metier');
+ 
+
 ?>
 <link rel="stylesheet" href="CSS/accueil.css">
 <div class="recherche">
@@ -10,20 +19,34 @@ require_once 'PHP/triatement/metierSelect.php';
     <div class="input">
     <div class="div">
         <select name="metier" id="">
-            <? echo  $metier?>
+            <option value="">Choisir un metier a rechercher</option>
+     <?php   while($metiers = $sql->fetch_assoc()) :?>
+
+    <option value="<?=$metiers['id_metier']?>"><?=$metiers['description_metier']?></option>
+
+<?php endwhile;?>
         </select>
     </div>
     <div class="div">
     <select name="region" id="">
-            <option value="">Region</option>
-            <option value="1">salut</option>
+            <option value=""> La Region</option>
+            <?php   while($region = $rg->fetch_assoc()) :?>
+
+                <option value="<?=$region['id_zone_geo']?>"><?=$region['lieu']?></option>
+
+            <?php endwhile;?>
         </select>
     </div>
     <input type="submit" value="Rechercher">
     </div>
 </div>
 </div>
+<div class="form">
+<?php   while($metiers = $sql->fetch_assoc()) :?>
 
+<p><?=$metiers['description_metier']?></p>
+
+<?php endwhile;?>
+</div>
 
 <script src="JS/accueil.js"></script>
-<?php $accueil = ob_get_clean(); ?>

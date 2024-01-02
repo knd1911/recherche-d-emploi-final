@@ -1,66 +1,56 @@
-<?php
-require_once'PHP/function/auth.php';
+<?php 
 
-    require_once 'PHP/config/config.php';
-if (est_connect()) {
-    header('location:/');
+$serveur = "localhost"; 
+$nomUtilisateur = "test";
+$motDePasse = "MyP@ssw0rd123";
+$nomBaseDeDonnees = "emploi";
+
+$conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
+   or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
+
+if (isset($_COOKIE['reset_token'])) {
+    $token = $_COOKIE['reset_token'];
 }
-
 if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
-    $pass = sha1(md5($_POST['password']));
-    $entrepise = mysqli_query($conn, "SELECT * FROM entreprise where email_entreprise='{$email}'");
-    $candidat = mysqli_query($conn, "SELECT * FROM candidat where email = '{$email}'");
-        if(mysqli_num_rows($entrepise) > 0 ){
-            echo "cet email existe deja dans entreprise";
-        }elseif(mysqli_num_rows($candidat) > 0 ){
-            $row = mysqli_fetch_assoc($candidat);
-            $bd_pass = $row['password'];
-            if ($pass === $bd_pass) {
-                session_start();
-                $_SESSION["candidat"] = $row['id_candidat'];
-                header('location:utilisateur/compte');
-            }else{
-                echo 'vos identifiant sont incorrect';
-            }
-        }else{
-            $erreur = "";
-        }
+    $pass =sha1(md5($_POST['password'])); 
+
+    $token = $_POST['token'];
+    
+
+    // Mettre à jour le mot de passe dans la base de données
+    $sql_update_password = "UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')";
+    mysqli_query($conn, $sql_update_password);
+    if ($sql_update_password) {
+        header('Location:/login');
+    }
 }
 
 ?>
-<div class="form">
-<form action="" method="post">
+
 <div class="head">
-        <h3 <?php if(isset($erreur)): ?>
-           style="display: none;"
-        <?php endif; ?>
-        
-        >Connexion </h3>
-        <?php if(isset($erreur)): ?>
-            <h2><?=$erreur?></h2>
-        <?php endif; ?>
-        </div>
-<div class="input">
-                <p class="titre">
-                    Email *:               
-                </p>
-                <input type="email" name="email" value="" required placeholder="Entrez votre email">
-            </div>
-            <div class="input">
+
+    <form method="post">
+    <h2>Réinitialiser le mot de passe</h2>
+
+    <div class="input">
                 <p class="titre">
                     Mot de passe *:               
                 </p>
-                <input type="password" name="password" placeholder="Entrez votre mot de passe" required>
+                <input type="password" name="password" placeholder="Entrez votre nouveau mot de passe" required>
             </div>
-        <a href="oublier" class="oubli">Mot de passe oublier?</a>
-
-            <div class="btn">
-            <input type="submit" name="submit" value="Se connecter">
+            <div class="input">
+            <input type="hidden" name="token" value="<?php echo $token; ?>">   </div>
+        <div class="btn">
+            <input type="submit" name="submit" ></input>
         </div>
-</form>
+    </form>
+
 </div>
+
 <style>
+    h2{
+        text-align: center;
+    }
     .form{
         display: flex;
         justify-content: center;

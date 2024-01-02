@@ -3,11 +3,11 @@
             if(session_status() == PHP_SESSION_NONE){
                 session_start();
             }
-            return !empty($_SESSION["connectee"]);
+            return !empty($_SESSION["candidat"]);
         }
         function forcer_utilisateur_connecte():void{
         if(!est_connect()){
-            header("Location:../login.php");
+            header("Location:login");
             exit();
         }
     }

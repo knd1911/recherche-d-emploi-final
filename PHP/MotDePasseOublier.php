@@ -1,66 +1,50 @@
-<?php
-require_once'PHP/function/auth.php';
+<?php 
 
-    require_once 'PHP/config/config.php';
-if (est_connect()) {
-    header('location:/');
-}
+require_once 'PHP/config/config.php';
+
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
-    $pass = sha1(md5($_POST['password']));
-    $entrepise = mysqli_query($conn, "SELECT * FROM entreprise where email_entreprise='{$email}'");
-    $candidat = mysqli_query($conn, "SELECT * FROM candidat where email = '{$email}'");
-        if(mysqli_num_rows($entrepise) > 0 ){
-            echo "cet email existe deja dans entreprise";
+    $entrepise = mysqli_query($conn, "SELECT email_entreprise FROM entreprise where email_entreprise='{$email}'");
+    $candidat = mysqli_query($conn, "SELECT email FROM candidat where email = '{$email}'");
+        if(mysqli_num_rows($candidat) > 0 ){
+            $token = bin2hex(random_bytes(16));
+            $entrepise_token = mysqli_query($conn, "INSERT INTO `password_forget` (`email`, `token`)
+                              VALUES ('{$email}', '{$token}')");
+
+           setcookie('reset_token', $token, time() + 3600, '/', '', true, true);
+            header("Location:renitialise");
+            exit;
+
         }elseif(mysqli_num_rows($candidat) > 0 ){
-            $row = mysqli_fetch_assoc($candidat);
-            $bd_pass = $row['password'];
-            if ($pass === $bd_pass) {
-                session_start();
-                $_SESSION["candidat"] = $row['id_candidat'];
-                header('location:utilisateur/compte');
-            }else{
-                echo 'vos identifiant sont incorrect';
-            }
+            echo "cet email existe deja";
         }else{
             $erreur = "";
         }
 }
 
 ?>
-<div class="form">
-<form action="" method="post">
-<div class="head">
-        <h3 <?php if(isset($erreur)): ?>
-           style="display: none;"
-        <?php endif; ?>
-        
-        >Connexion </h3>
-        <?php if(isset($erreur)): ?>
-            <h2><?=$erreur?></h2>
-        <?php endif; ?>
-        </div>
-<div class="input">
-                <p class="titre">
-                    Email *:               
-                </p>
-                <input type="email" name="email" value="" required placeholder="Entrez votre email">
-            </div>
-            <div class="input">
-                <p class="titre">
-                    Mot de passe *:               
-                </p>
-                <input type="password" name="password" placeholder="Entrez votre mot de passe" required>
-            </div>
-        <a href="oublier" class="oubli">Mot de passe oublier?</a>
 
-            <div class="btn">
-            <input type="submit" name="submit" value="Se connecter">
+<div class="head">
+
+    <form method="post">
+    <h2>Mot de passe oublier</h2>
+
+        <div class="input">
+        <p class="titre">Adresse e-mail :</p>
+        <input type="email" name="email" required>
         </div>
-</form>
+        <div class="btn">
+            <input type="submit" name="submit" ></input>
+        </div>
+    </form>
+
 </div>
+
 <style>
+    h2{
+        text-align: center;
+    }
     .form{
         display: flex;
         justify-content: center;

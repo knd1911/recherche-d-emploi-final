@@ -1,12 +1,92 @@
 <?php
+require_once'PHP/function/auth.php';
+ob_start();
+est_connect();
+$serveur = "localhost"; 
+$nomUtilisateur = "test";
+$motDePasse = "MyP@ssw0rd123";
+$nomBaseDeDonnees = "emploi";
 
-require_once 'PHP/config/config.php';
-require_once 'PHP/accueil.php';
+$conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
+   or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
 
+   //unset($_SESSION['candidat']);
+                $id=$_SESSION['candidat']?:null;
+/*
+if (!isset($_SERVER["REQUEST_URI"])) {
+    ob_start();
+    require_once 'PHP/accueil.php';
+    $contenu = ob_get_clean();
+}else
+if (isset($_SERVER["REQUEST_URI"])) {
+    $page = $_SERVER["REQUEST_URI"];
+    if($page == '/test' ){
+        ob_start();
+        require_once 'test.php';
+        $contenu = ob_get_clean();
+    }
+}*/
+$requestUri = $_SERVER["REQUEST_URI"];
+
+function route($requestUri) {
+    $path = strtok($requestUri, '?');
+    switch ($path) {
+        case '/':
+            require_once 'PHP/accueil.php';;
+            break;
+        case '/inscription':
+            include('PHP/choix/inscription.php');
+            break;
+        case '/inscription/candidat':
+            include('PHP/candidatLogin.php');
+            break;
+        case '/inscription/login':
+            include('PHP/location/login.php');
+            break;
+            case '/utilisateur/login':
+              include('PHP/location/login.php');
+              break;
+        case '/login':
+            include('PHP/login.php');
+            break;
+        case '/oublier':
+            include('PHP/MotDePasseOublier.php');
+            break;
+        case '/renitialise':
+          include('PHP/ResetPassword.php');
+          break;
+        case "/utilisateur/compte":
+          include('PHP/candidatCompte.php');
+          break;
+          case "/compte":
+            include('PHP/candidatCompte.php');
+            break;
+            case "/update":
+              include('PHP/candidatProfil.php');
+              break;
+              case "/utilisateur/update":
+                include('PHP/candidatProfil.php');
+                break;
+          case '/utilisateur/deconnecte':
+            include('PHP/location/logout.php');
+            break;
+            case '/deconnecte':
+              include('PHP/location/logout.php');
+              break;  
+        default:
+            include('PHP/404.php');
+            break;
+    }
+}
+var_dump('/utilisateur/'.$id);
+route($requestUri);
+
+$contenu = ob_get_clean();
 
 
 ?>
-
+<pre>
+</pre>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,13 +98,19 @@ require_once 'PHP/accueil.php';
 <body>
 <nav>
 <ul>
-  <li><a href="#home">Home</a></li>
+  <li><a href="/">Home</a></li>
   <li><a href="#news">News</a></li>
   <li><a href="#contact">Contact</a></li>
   <li style="float:right">
     <ul>
-        <li><a href="">S'incrire</a></li>
-        <li><a href="">Se connecter</a></li>
+    <?php if(!est_connect()):?>
+        <li><a href="inscription">S'incrire</a></li>
+        <li><a href="login">Se connecter</a></li>
+    <?php endif; ?>
+    <?php if(est_connect()):?>
+        <li><a href="compte">compte</a></li>
+        <li><a href="deconnecte">Se deconnecter</a></li>
+    <?php endif; ?>
     </ul>
     </li>
 </ul>
@@ -34,7 +120,7 @@ require_once 'PHP/accueil.php';
 
 
 <div class="container">
-    <?= $accueil ?> 
+    <?= $contenu ?> 
 </div>
 
 
@@ -50,3 +136,56 @@ require_once 'PHP/accueil.php';
 </footer>
 </body>
 </html>
+
+<style>
+    body{
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+nav{
+  padding: 20px;
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  
+  nav ul li {
+    float: left;
+  }
+  
+  nav ul li a {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    text-decoration: none;
+  }
+  
+  /* Change the link color to #111 (black) on hover */
+  nav ul li a:hover {
+    background-color: #f34545;
+    color: #fff;
+    font-weight: 800;
+  }
+
+  footer {
+    background-color: #fff;
+    padding: 10px;
+    margin: 20px;
+    text-align: center;
+    color: #333;
+    margin-top: auto;
+  }
+  footer .credite a{
+    color: #f34545;
+  }
+  .container{
+    margin-left: 30px;
+  }
+</style>
