@@ -1,31 +1,67 @@
 <?php 
+ 
+ $serveur = "localhost"; 
+ $nomUtilisateur = "test";
+ $motDePasse = "MyP@ssw0rd123";
+ $nomBaseDeDonnees = "emploi";
+ 
+ $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees);
 
+ $rg = mysqli_query($conn, 'SELECT * from zone_geo');
+ $sql = mysqli_query($conn, 'SELECT * from secteur_activite');
+ $id = (int)$_SESSION['entreprise'] ?? null;
 
-
-
-$serveur = "localhost"; 
-$nomUtilisateur = "test";
-$motDePasse = "MyP@ssw0rd123";
-$nomBaseDeDonnees = "emploi";
-
-$conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
-or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
-
-$id = (int)$_SESSION['entreprise'] ;
-
-
-
-$sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
-                            from emploi emploi
-                            JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
-                            ORDER BY date_publication DESC");
-
+ 
 
 ?>
+
+<link rel="stylesheet" href="CSS/accueil.css">
+<div class="recherche">
+<form action="" method="post">
+<div class="search">
+    <div class="input">
+    <div class="div">
+        <select name="metier" id="" required>
+            <option>Choisir un secteur d'activite a rechercher</option>
+     <?php   while($metiers = $sql->fetch_assoc()) :?>
+
+    <option value="<?=$metiers['dsc_secteur_activite'] ?>"><?=$metiers['dsc_secteur_activite']?></option>
+
+<?php endwhile;?>
+        </select>
+    </div>
+    <div class="div">
+    <select name="region" id="" required>
+            <option value=""> La Region</option>
+            <?php   while($region = $rg->fetch_assoc()) :?>
+
+                <option value="<?=$region['lieu']?>"><?=$region['lieu']?></option>
+
+            <?php endwhile;?>
+        </select>
+    </div>
+    <input type="submit" name="rechercher" value="Rechercher">
+    </div>
+</div>
+</div>
+            </form  >
+<?php if(!empty($_POST['region']) && !empty($_POST['metier'])): 
+    
+    $ville = mysqli_escape_string($conn, $_POST['region']);
+    $dsc = mysqli_escape_string($conn, $_POST['metier']);
+
+$requet = mysqli_query($conn, "SELECT emploi.*, entreprise.*
+                            from emploi emploi
+                            JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
+                            where localite = '{$ville}' AND secteur_activite = '{$dsc}'
+                            ORDER BY date_publication DESC");
+    
+    ?>
+
 <div class="listes">
     <?php if (mysqli_num_rows($sql)>0):  ?>
         <div class="colonne">
-            <?php foreach($sql as $offre) : ?>
+            <?php foreach($requet as $offre) : ?>
 
                 <a href="/offre/voirPlus?id=<?=$offre['id_emploi']?>" class="content">
                     
@@ -44,13 +80,14 @@ $sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
         </div>
     <?php endif; ?>
 </div>
-
-
-
-
-
+            <?php if(mysqli_num_rows($requet)==0):  ?>
+                <h1 style="text-align: center;" >Aucun resultat trouver</h1>
+                
+            <?php endif; ?>
+<?php endif; ?>
+<script src="JS/accueil.js"></script>
 <style>
-     .listes{
+       .listes{
         display: flex;
         justify-content: center;
         

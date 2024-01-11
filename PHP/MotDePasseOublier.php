@@ -16,8 +16,14 @@ if (isset($_POST['submit'])) {
             header("Location:renitialise");
             exit;
 
-        }elseif(mysqli_num_rows($candidat) > 0 ){
-            echo "cet email existe deja";
+        }if(mysqli_num_rows($entrepise) > 0 ){
+            $token = bin2hex(random_bytes(16));
+            $entrepise_token = mysqli_query($conn, "INSERT INTO `password_forget` (`email`, `token`)
+                              VALUES ('{$email}', '{$token}')");
+
+           setcookie('reset_token', $token, time() + 3600, '/', '', true, true);
+            header("Location:renitialise");
+            exit;
         }else{
             $erreur = "";
         }

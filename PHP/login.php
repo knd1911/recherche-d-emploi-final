@@ -12,7 +12,16 @@ if (isset($_POST['submit'])) {
     $entrepise = mysqli_query($conn, "SELECT * FROM entreprise where email_entreprise='{$email}'");
     $candidat = mysqli_query($conn, "SELECT * FROM candidat where email = '{$email}'");
         if(mysqli_num_rows($entrepise) > 0 ){
-            echo "cet email existe deja dans entreprise";
+            $row = mysqli_fetch_assoc($entrepise);
+            $bd_pass = $row['password_entreprise'];
+            if ($pass === $bd_pass) {
+            //var_dump($pass === $bd_pass);
+            session_start();
+                $_SESSION["entreprise"] = $row['id_entreprise'];
+                header('location:entreprise/compte');
+            }else{
+                $erreur = 'vos identifiant sont incorrect';
+            }
         }elseif(mysqli_num_rows($candidat) > 0 ){
             $row = mysqli_fetch_assoc($candidat);
             $bd_pass = $row['password'];
@@ -21,12 +30,13 @@ if (isset($_POST['submit'])) {
                 $_SESSION["candidat"] = $row['id_candidat'];
                 header('location:utilisateur/compte');
             }else{
-                echo 'vos identifiant sont incorrect';
+                $erreur = 'vos identifiant sont incorrect';
             }
         }else{
-            $erreur = "";
+            $erreur = "vos identifiant sont incorrect";
         }
-}
+    }
+
 
 ?>
 <div class="form">
@@ -45,7 +55,7 @@ if (isset($_POST['submit'])) {
                 <p class="titre">
                     Email *:               
                 </p>
-                <input type="email" name="email" value="" required placeholder="Entrez votre email">
+                <input type="email" name="email" value="<?= $_POST['email'] ?: null ?>" required placeholder="Entrez votre email">
             </div>
             <div class="input">
                 <p class="titre">

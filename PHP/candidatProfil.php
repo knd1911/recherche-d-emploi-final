@@ -1,19 +1,118 @@
 <?php 
-require_once'PHP/function/auth.php';
+require_once 'PHP/function/auth.php';
 forcer_utilisateur_connecte();
 require_once 'PHP/config/config.php';
 $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
+$expereinces = mysqli_query($conn, "SELECT * FROM experience");
+$regions = mysqli_query($conn, "SELECT * FROM zone_geo");
+$metiers = mysqli_query($conn, "SELECT * FROM metier");
+$contrat = mysqli_query($conn, "SELECT * FROM contrat");
+$activites = mysqli_query($conn, "SELECT * FROM secteur_activite");
+
+
+if(isset($_POST['submit'])){
+
+    $niveau = $_POST['niveau'];
+    $formation_titre = $_POST['titre_formation'];
+    $formation_lieux = $_POST['ecole_formation'];
+    $formation_date_debut = $_POST['date_debut_formation'];
+    $formation_date_fin = $_POST['date_fin_formation'];
+    $formation_description = $_POST['description'];
+    $exp = $_POST['Ex'];
+    $nom_post = $_POST['nomPost'];
+    $entreprise = $_POST['nom_entreprise'];
+    $exp_date_debut = $_POST['date_debut_exp'];
+    $exp_date_fin = $_POST['date_fin_exp'];
+    $exp_description = $_POST['description_exp'];
+    $id_metier = $_POST['metier'];
+    $id_region = $_POST['region'];
+    $type_contrat = $_POST["contrat"];
+
+    $id_candidat = (int)$_SESSION['candidat'];
+    $sql_select = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
+    $result_select = mysqli_query($conn, $sql_select);
+
+    if (isset($_FILES["image"])) {
+           
+        
+        $img_name = $_FILES['image']['name'];
+            $img_type = $_FILES['image']['type'];
+            $tmp_name = $_FILES['image']['tmp_name'];
+
+
+            $img_explode = explode('.',$img_name);
+            $img_ext = end($img_explode);
+
+            $extensions = ["jpeg", "png", "jpg"];
+            if(in_array($img_ext, $extensions) === true){
+                $retour =  move_uploaded_file($tmp_name,"image/".$img_name);
+                    if($retour) {
+                        
+                        if ($result_select) {
+                            $row = $result_select->fetch_assoc();
+                            $formations_json = $row['formation'];
+                            $expereinces_json = $row['exp_pro'];
+                            // Ajouter la nouvelle formation au tableau JSON
+                            $formations_array = json_decode($formations_json, true) ?: [];
+                            $experiences_array = json_decode($expereinces_json, true) ?: [];
+                            $nouvelle_formation = [
+                                'titre' => $formation_titre,
+                                'date_debut' => $formation_date_debut,
+                                'date_fin' => $formation_date_fin,
+                                'description' => $formation_description
+                            ];
+                            $nouvelle_exp = [
+                                'titre' => $nom_post,
+                                'date_debut' => $exp_date_debut,
+                                'date_fin' => $exp_date_fin,
+                                'description' => $exp_description
+                            ];
+                            $formations_array[] = $nouvelle_formation;
+                            $experiences_array[] = $nouvelle_exp;
+                    
+                            // Mettre à jour la base de données avec le nouveau tableau JSON
+                            $formations_json_updated = (json_encode($formations_array));
+                            $exp_json_updated = (json_encode($experiences_array));
+                            $sql_update = "UPDATE candidat SET image ='{$img_name}', id_niveau_etude='{$niveau}', formation = '{$formations_json_updated}', exp_pro = '{$exp_json_updated}',
+                                                                id_exp = '{$exp}', id_metier = '{$id_metier}', type_contrat = '{$type_contrat}'
+                            WHERE id_candidat = {$id_candidat}";
+                             
+                           $result_update = mysqli_query($conn,$sql_update);
+                    
+                            if ($result_update) {
+                               header("location:/compte");
+                            } else {
+                                echo "Erreur lors de la mise à jour de la base de données : " . $conn->error;
+                            }
+                        } else {
+                            echo "Erreur lors de la récupération des données actuelles : " . $conn->error;
+                        }
+
+
+                    } else {
+                        echo"donnees non poster";
+                    }
+            }
+        
+        } 
+
+
+}
+
+
+
+
+
 ?>
 
-
-
+<form action="" method="post" enctype="multipart/form-data">
 <div class="forms">
 <div class="border">
 <div class="head">
         <h3>Ma photo</h3>
     </div>
 <div class="form">
-   <div class="form" enctype="multipart/form-data">
+   <div class="form" >
     <input type="file" name="image" id="">
    </div>
 </div>
@@ -32,60 +131,144 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
     <div class="bottom">
         <h3>Niveau d'etudes *:</h3>
         <?php foreach ($niveau_etude as $niv_etude): ?>
-            <input class="radio" type="radio" name="niveau" value="<?= $niv_etude['id_niveau_etude'] ?>" id=""><?= $niv_etude['niveau'] ?>
+            <input class="radio" type="radio" required name="niveau" value="<?= $niv_etude['niveau'] ?>" id=""><?= $niv_etude['niveau'] ?>
         <?php endforeach; ?>
     </div>
     
     <div style="border-bottom: 1px solid #ccc;"></div>
-    <div class="bottom">
+<div class="bottom">
     <h3>Formation</h3>
-
-    <form id="formFormation" style="background-color: #ccc;  border-radius: 10px; padding:10px;" method="post">
-    <div class="formation-container">
-        <div>
-        <p class="titre">Titre:</p>
-        <input style="width: 90%;margin:20px;"  type="text" name="titre[]">
+    <div class="formation-container" style="background-color: #ccc;  border-radius: 10px; padding:10px;">
+        <div style="display: flex; justify-content:space-between;">
+        <div style="width: 100%;"  >
+        <p class="titre">Titre de la formation:</p>
+        <input style="width: 90%;margin:20px;"  type="text" name="titre_formation[]" required>
+        </div>
+        <div style="width: 100%;"  >
+        <p class="titre">Nom de l'école ou de l'établissement</p>
+        <input style="width: 90%;margin:20px;"  type="text" name="ecole_formation[]" required>
+        </div>
         </div>
 
         <div style="display: flex;justify-content: space-around;">
         <p for="date_debut">Date de début:</p>
-        <input type="month" name="date_debut[]">
+        <input type="month" name="date_debut_formation[]" required>
 
         <p for="date_fin">Date de fin:</p>
-        <input type="month" name="date_fin[]">
+        <input type="month" name="date_fin_formation[]" required>
 
-        <p>Aujourd'hui:
-            <input type="radio" name="aujourdhui[]" value="1" onclick="toggleDateFin(this)">
-        </p>
+        
         </div>
 
         <p class="titre">Description:</p>
-        <textarea name="description[]"></textarea>
+        <textarea name="description[]" required></textarea>
 
-        <div class="supression">
-            <button type="button" onclick="supprimerFormation(this)">Supprimer</button>
+            <button type="button" class="sup" onclick="supprimerFormation(this)">Supprimer</button>
+        
+    </div>
+    <button type="button" class="ajouter-formation-button ajout" onclick="ajouterFormation()">Ajouter une Formation</button>
+
+    </div>
+    <div style="border-bottom: 1px solid #ccc;"></div>
+
+    <div class="bottom">
+    <h3>Niveau d'experience * :</h3>
+    <?php foreach ($expereinces as $experience): ?>
+            <input class="radio" type="radio" required name="Ex" value="<?= $experience['experience'] ?>" id=""><?= $experience['experience'] ?>
+        <?php endforeach; ?>
+    </div>
+    <div style="border-bottom: 1px solid #ccc;"></div>
+    <div class="bottom">
+    <h3>Experience Professionnelle *:</h3>
+    <div class="exp-container" style="background-color: #ccc;  border-radius: 10px; padding:10px;">
+        <div style="display: flex; justify-content:space-between;">
+        <div style="width: 100%;"  >
+        <p class="titre">Intitule du poste:</p>
+        <input style="width: 90%;margin:20px;"  type="text" name="nomPoste[]">
         </div>
-    </div>
+        <div style="width: 100%;"  >
+        <p class="titre">Nom de l'entreprise</p>
+        <input style="width: 90%;margin:20px;"  type="text" name="nom_entreprise[]">
+        </div>
+        </div>
 
-    <button type="button" class="ajouter-formation-button" onclick="ajouterFormation()">Ajouter Formation</button>
-    <div class="btn">
-    <input type="submit" value="Enregistrer">
+        <div style="display: flex;justify-content: space-around;">
+        <p for="date_debut">Date de début:</p>
+        <input type="month" name="date_debut_exp[]">
+
+        <p for="date_fin">Date de fin:</p>
+        <input type="month" name="date_fin_exp[]">
+        </div>
+
+        <p class="titre">Description:</p>
+        <textarea name="description_exp[]"></textarea>
+
+            <button type="button" class="sup" onclick="supprimerExp(this)">Supprimer</button>
+        
     </div>
+    <button type="button" class="ajouter-formation-button ajout" onclick="ajouterExp()">Ajouter une Experience profesionnelle</button>
+
+    </div>
+    <div class="select">
+    <div class="bottom" id="regionsSelectionnes">
+        <h3>Localité :</h3>
+        <h4>si vous n'avez pas de preferences ne pas faire un choix</h4>
+        <select name="region" id="">
+            <option value="">Region</option>
+            <?php   while($region = $regions->fetch_assoc()) :?>
+
+                <option value="<?=$region['lieu']?>"><?=$region['lieu']?></option>
+
+            <?php endwhile;?>
+        </select>
+    </div>
+    <div class="bottom" id="metiersSelectionnes">
+        <h3>Choisir vos metiers * :</h3>
+        <select name="metier" id="">
+            <?php   while($metier = $metiers->fetch_assoc()) :?>
+                <option value="<?=$metier['description_metier']?>"><?=$metier['description_metier']?></option>
+                <?php endwhile;?>
+        </select>
+        
+    </div>
+    </div>
+    <div class="bottom">
+        <h3>Type de contract *:</h3>
+        <?php foreach ($contrat as $contracts): ?>
+            <input class="radio" type="radio" required name="contrat" value="<?= $contracts['type'] ?>" id=""><?= $contracts['type'] ?>
+        <?php endforeach; ?>
+        </div>
+</div>
+<div class="btn">
+    <input type="submit" name="submit" value="Envoyer">
+</div>
 </form>
-    </div>
-</div>
-<div class="border">
-    <div class="head">
-        <h3>Suivie des candidatures</h3>
-    </div>
-    <h3>vous n'avez pas envoyer de candidature</h3>
-    <div class="btn">
-    
-            <a href="#">Gerer mes candidatures</a>
-        </div>
-</div>
 <style>
-    .
+        .select{
+            display: flex;
+            justify-content: space-between;
+        }
+        
+    .sup{
+        padding: 10px;
+        background-color: #fff;
+        color: red;
+        font-size: 20px;
+        outline: none;
+        border: none;
+        border-radius: 20px;
+        margin-top: 20px;
+    }
+    .ajout{
+        padding: 10px;
+        background-color: #f34545;
+        color: #fff;
+        font-size: 20px;
+        outline: none;
+        border: none;
+        border-radius: 20px;
+        margin-top: 20px;
+    }
     .radio{
         font-size: 20px;
         background-color: #f34545;
@@ -227,19 +410,17 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
     }
 
     function ajouterFormation() {
-        var formationContainer = document.querySelector('#formFormation .formation-container').cloneNode(true);
+        var formationContainer = document.querySelector('.formation-container').cloneNode(true);
         formationContainer.querySelectorAll('input, textarea').forEach(function (element) {
             element.value = ""; // Réinitialise les valeurs
         });
-        formationContainer.querySelector('[type="radio"]').addEventListener('click', function () {
-            toggleDateFin(this);
-        });
+        
 
         formationContainer.querySelector('button').addEventListener('click', function () {
             supprimerFormation(this);
         });
 
-        document.querySelector('#formFormation').appendChild(formationContainer);
+        document.querySelector('.formation-container').appendChild(formationContainer);
     }
 
     function supprimerFormation(button) {
@@ -250,4 +431,87 @@ $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
             alert("Vous ne pouvez pas supprimer la seule formation.");
         }
     }
+
+    function ajouterExp() {
+        var formationContainer = document.querySelector('.exp-container').cloneNode(true);
+        formationContainer.querySelectorAll('input, textarea').forEach(function (element) {
+            element.value = ""; // Réinitialise les valeurs
+        });
+       
+
+        formationContainer.querySelector('button').addEventListener('click', function () {
+            supprimerExp(this);
+        });
+
+        document.querySelector('.exp-container').appendChild(formationContainer);
+    }
+
+    function supprimerExp(button) {
+        var formationContainer = button.parentNode;
+        if (document.querySelectorAll('.exp-container').length > 1) {
+            formationContainer.parentNode.removeChild(formationContainer);
+        } else {
+            alert("Vous ne pouvez pas supprimer la seule formation.");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+    var metiersSelectionnes = document.getElementById("regionsSelectionnes");
+
+    // Fonction pour ajouter une region
+    window.ajouterRegion = function () {
+        var nouvelleRegionSelect = document.querySelector('select[name="region[]"]');
+        var regionSelectionne = nouvelleRegionSelect.value;
+        if (regionSelectionne) {
+            // Crée un nouvel élément div pour afficher la region sélectionné
+            var divRegion = document.createElement('div');
+            divRegion.innerHTML = regionSelectionne + " <button type='button' onclick='supprimerRegion(this)'>Supprimer</button>";
+
+            // Ajoute le nouvel élément à la section des regions sélectionnés
+            regionsSelectionnes.appendChild(divRegion);
+
+            // Réinitialise la liste déroulante pour la prochaine sélection
+            nouvelleRegionSelect.value = "";
+        }
+    }
+    window.supprimerRegion = function (element) {
+        var confirmation = confirm("Êtes-vous sûr de vouloir supprimer la region '" + element.previousSibling.textContent.trim() + "' ?");
+        if (confirmation) {
+            element.parentNode.remove();
+        }
+    };
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    var metiersSelectionnes = document.getElementById("metiersSelectionnes");
+
+    // Fonction pour ajouter un métier
+    window.ajouterMetier = function () {
+        var nouveauMetierSelect = document.querySelector('select[name="metier[]"]');
+        var metierSelectionne = nouveauMetierSelect.value;
+
+        if (metierSelectionne) {
+            // Crée un nouvel élément div pour afficher le métier sélectionné
+            var divMetier = document.createElement('div');
+            divMetier.innerHTML = metierSelectionne + " <button type='button' onclick='supprimerMetier(this)'>Supprimer</button>";
+
+            // Ajoute le nouvel élément à la section des métiers sélectionnés
+            metiersSelectionnes.appendChild(divMetier);
+
+            // Réinitialise la liste déroulante pour la prochaine sélection
+            nouveauMetierSelect.value = "";
+        }
+    };
+
+    // Fonction pour supprimer un métier
+    window.supprimerMetier = function (element) {
+        var confirmation = confirm("Êtes-vous sûr de vouloir supprimer le métier '" + element.previousSibling.textContent.trim() + "' ?");
+        if (confirmation) {
+            element.parentNode.remove();
+        }
+    };
+});
+
+
+
 </script>

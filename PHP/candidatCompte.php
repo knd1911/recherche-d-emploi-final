@@ -1,6 +1,22 @@
 <?php 
 require_once'PHP/function/auth.php';
 forcer_utilisateur_connecte();
+$id_candidat = (int)$_SESSION['candidat'];
+require_once 'PHP/config/config.php';
+$candidats = mysqli_query($conn, "SELECT * FROM candidat where id_candidat = {$id_candidat}");
+$candidat = $candidats->fetch_assoc();
+$profilComplet = true;
+$colonnes = ["{$candidat['id_niveau_etude']}", "{$candidat['formation']}", "{$candidat['exp_pro']}", "{$candidat['id_exp']}", "{$candidat['id_metier']}", "{$candidat['type_contrat']}"];
+foreach($colonnes as $colonne){
+    if(empty($colonne)){
+        $profilComplet = false;
+        break;
+    }
+}
+
+$sql_select = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
+$result = mysqli_query($conn,$sql_select);
+
 
 ?>
 
@@ -14,7 +30,7 @@ forcer_utilisateur_connecte();
 <div class="form">
     
     <div class="img">
-        <img src="../image/profile.jpeg" alt="">
+        <img src="../image/<?= $candidat['image'] ?>" alt="">
     </div>
     <div class="element">
         <h3>Nom: KOUANDA</h3>
@@ -26,17 +42,71 @@ forcer_utilisateur_connecte();
 </div>
 </div>
 <div class="cv">
+    <?php if (!$profilComplet):?>
     <div class="head">
         <h3>completez votre profil</h3>
     </div>
     <h2>Veuillez completez votre profil pour continuer</h2>
     <h2><a href="update">cliquez ici</a></h2>
+
+<?php else:?>
+
+    <div class="head">
+        <h3>Vos Information</h3>
+    </div>
+    <h2 style="color: green;">Votre profil est a jour</h2>
+    <h2><a href="update">cliquez ici pour modifier vos criteres</a></h2>
+
+<?php endif; ?>
 </div>
 </div>
 <div class="border">
     <div class="head">
-        <h3>Nos suggestions d´offres d´emploi pour vous</h3>
+        <h3>Mes criteres</h3>
     </div>
+    <?php while ($row = $result->fetch_assoc()): 
+        $formationData = json_decode($row['formation'], true);
+        $expData = json_decode($row['exp_pro'], true);
+        ?>
+            <div style="display: flex;justify-content:space-between;">
+               
+                <div>
+                <div class="">
+             <h1>Vos formation</h1>
+             <?php foreach ($formationData as $formation): ?>
+                <h3>Titre : <?=$formation['titre'][0]?></h3>
+                <h3>Date de debut <?= $formation['date_debut'][0] ?></h3>
+                <h3>Date de fin <?= $formation['date_fin'][0] ?></h3>
+                <h3>Description <?= $formation['description'][0] ?></h3>
+            <?php endforeach; ?>
+            </div>
+            <div>
+            <h1>Experience profesionelle</h1>
+        <?php foreach ($expData as $exp): ?>
+                <h3>Titre : <?=$exp['titre'][0]?></h3>
+        <h3>Date de debut <?= $exp['date_debut'][0] ?></h3>
+        <h3>Date de fin <?= $exp['date_fin'][0] ?></h3>
+        <h3>Description <?= $exp['description'][0] ?></h3>
+            <?php endforeach; ?>
+        </div>
+                </div>
+
+                <div>
+                    <h1>Niveau d'etude</h1>
+                    <h2><?= $row['id_niveau_etude'] ?></h2>
+
+                    <h1>Niveau d'experience</h1>
+                    <h2><?= $row['id_exp'] ?></h2>
+
+                    <h1>Domaine de metier</h1>
+                    <h2><?= $row['id_metier'] ?></h2>
+
+                    <h1>type de contrat</h1>
+                    <h2><?= $row['type_contrat'] ?></h2>
+                </div>
+            </div>
+    <?php endwhile;?>
+
 </div>
 <div class="border">
     <div class="head">
@@ -49,6 +119,12 @@ forcer_utilisateur_connecte();
         </div>
 </div>
 <style>
+    .img img{
+        width: 200px;
+        height: 200px;
+        border-radius: 20px;
+        margin: 20px;
+    }
     .cv{
         background-color: #fff;
         box-shadow: 2px 2px 2px 2px rgba(0,0,0,.5);

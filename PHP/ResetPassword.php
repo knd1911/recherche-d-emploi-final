@@ -18,8 +18,9 @@ if (isset($_POST['submit'])) {
     
 
     // Mettre à jour le mot de passe dans la base de données
-    $sql_update_password = "UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')";
-    mysqli_query($conn, $sql_update_password);
+    $sql_password = "UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')";
+    $sql_password = "UPDATE entreprise SET password_entreprise = '{$pass}' WHERE email_entreprise IN (SELECT email FROM password_forget WHERE token = '{$token}')";
+    $sql_update_password=mysqli_query($conn, $sql_password);
     if ($sql_update_password) {
         header('Location:/login');
     }

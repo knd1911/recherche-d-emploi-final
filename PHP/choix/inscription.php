@@ -9,7 +9,7 @@ if (est_connect()) {
     <h1>Choisir l'inscription </h1>
 <div class="choix">
     <a href="inscription/candidat">Candidat</a>
-    <a href="recruteur">Employeur</a>
+    <a href="inscription/recruteur">Employeur</a>
 </div>
 </div>
 

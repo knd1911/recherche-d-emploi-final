@@ -27,6 +27,7 @@ if (isset($_SERVER["REQUEST_URI"])) {
     }
 }*/
 $requestUri = $_SERVER["REQUEST_URI"];
+$getUri = $_GET;
 
 function route($requestUri) {
     $path = strtok($requestUri, '?');
@@ -37,15 +38,33 @@ function route($requestUri) {
         case '/inscription':
             include('PHP/choix/inscription.php');
             break;
+            case '/offre/inscription':
+              include('PHP/choix/inscription.php');
+              break;
+              case '/offre/voirPlus/inscription':
+                include('PHP/location/inscription.php');
+                break;
         case '/inscription/candidat':
             include('PHP/candidatLogin.php');
             break;
+            case '/inscription/recruteur':
+              include('PHP/recruteurLogin.php');
+              break;
         case '/inscription/login':
             include('PHP/location/login.php');
             break;
             case '/utilisateur/login':
               include('PHP/location/login.php');
               break;
+              case '/gestion/login':
+                include('PHP/location/login.php');
+                break;
+                case '/offre/login':
+                  include('PHP/location/login.php');
+                  break;
+                  case '/offre/voirPlus/login':
+                    include('PHP/location/login.php');
+                    break;
         case '/login':
             include('PHP/login.php');
             break;
@@ -64,21 +83,66 @@ function route($requestUri) {
             case "/update":
               include('PHP/candidatProfil.php');
               break;
+              case "/gestion/annonce":
+                include('PHP/GestionAnonnces/listes.php');
+                break;
+                case "/entreprise/gestion/annonce":
+                  include('PHP/location/GestionAnnonce.php');
+                  break;
               case "/utilisateur/update":
                 include('PHP/candidatProfil.php');
                 break;
           case '/utilisateur/deconnecte':
             include('PHP/location/logout.php');
             break;
+            case '/entreprise/deconnecte':
+              include('PHP/location/logout.php');
+              break;
+              case '/offre/deconnecte':
+                include('PHP/location/logout.php');
+                break;
+                case '/offre/voirPlus/deconnecte':
+                  include('PHP/location/logout.php');
+                  break;
             case '/deconnecte':
               include('PHP/location/logout.php');
-              break;  
+              break;
+              case '/gestion/annonce/deconnecte':
+                include('PHP/location/logout.php');
+                break;
+              case '/entreprise/compte':
+                include('PHP/compteEntreprise.php');
+                break;
+                case '/entreprise/compte':
+                  include('PHP/compteEntreprise.php');
+                  break;  
+                case '/entreprise/entreprise/compte':
+                  include('PHP/location/entrepriseCompte.php');
+                  break;  
+                  case '/gestion/entreprise/compte':
+                    include('PHP/location/entrepriseCompte.php');
+                    break; 
+                    case '/gestion/annonce/entreprise/compte':
+                      include('PHP/location/entrepriseCompte.php');
+                      break; 
+                    case '/gestion/annonce/publier':
+                      include('PHP/GestionAnonnces/publierAnonnce.php');
+                      break; 
+                      case '/recherche':
+                        include('PHP/recherche.php');
+                        break; 
+                        case '/offre/voirPlus':
+                          include('PHP/voirPlus.php');
+                          break; 
+              
+
+
         default:
             include('PHP/404.php');
             break;
     }
 }
-var_dump('/utilisateur/'.$id);
+
 route($requestUri);
 
 $contenu = ob_get_clean();
@@ -86,6 +150,7 @@ $contenu = ob_get_clean();
 
 ?>
 <pre>
+  <?= var_dump($_POST) ?>
 </pre>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,7 +164,7 @@ $contenu = ob_get_clean();
 <nav>
 <ul>
   <li><a href="/">Home</a></li>
-  <li><a href="#news">News</a></li>
+  <li><a href="/recherche">Rechercher un emploie</a></li>
   <li><a href="#contact">Contact</a></li>
   <li style="float:right">
     <ul>
@@ -108,7 +173,12 @@ $contenu = ob_get_clean();
         <li><a href="login">Se connecter</a></li>
     <?php endif; ?>
     <?php if(est_connect()):?>
-        <li><a href="compte">compte</a></li>
+        <li>
+          <?php if(isset($_SESSION["candidat"])): ?>
+          <a href="compte">compte</a></li>
+          <?php elseif(isset($_SESSION["entreprise"])) :?>
+          <a href="entreprise/compte">compte</a></li>
+          <?php endif; ?>
         <li><a href="deconnecte">Se deconnecter</a></li>
     <?php endif; ?>
     </ul>
@@ -145,12 +215,16 @@ $contenu = ob_get_clean();
   min-height: 100vh;
 }
 nav{
-  padding: 20px;
+  
+
+
+  position: sticky;
+  top: 0;
 }
 nav ul {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     overflow: hidden;
     background-color: #fff;
   }
@@ -163,8 +237,8 @@ nav ul {
     display: block;
     color: #333;
     text-align: center;
-    padding: 20px;
     text-decoration: none;
+    margin-left: 20px;
   }
   
   /* Change the link color to #111 (black) on hover */
@@ -177,7 +251,6 @@ nav ul {
   footer {
     background-color: #fff;
     padding: 10px;
-    margin: 20px;
     text-align: center;
     color: #333;
     margin-top: auto;

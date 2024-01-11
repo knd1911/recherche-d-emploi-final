@@ -1,5 +1,5 @@
 <?php 
 
 session_start();
-unset($_SESSION['candidat']);
+session_destroy();
 header('location:/');
