@@ -12,6 +12,20 @@
  $id = (int)$_SESSION['entreprise'] ?? null;
 
  
+ function couperPhrase($phrase, $nombreDeMots = 19) {
+    $mots = explode(" ", $phrase);
+    if (count($mots) > $nombreDeMots) {
+        $motsCoupes = array_slice($mots, 0, $nombreDeMots);
+        $phraseCoupée = implode(" ", $motsCoupes);
+        $phraseCoupée .= "...";
+
+        return $phraseCoupée;
+    } else {
+        return $phrase;
+    }
+}
+
+ 
 
 ?>
 
@@ -66,13 +80,13 @@ $requet = mysqli_query($conn, "SELECT emploi.*, entreprise.*
                 <a href="/offre/voirPlus?id=<?=$offre['id_emploi']?>" class="content">
                     
                     <div class="image">
-                        <img src="image/<?=$offre['image']?>" alt="">
+                        <img src="image/<?=$offre['logo_entreprise']?>" alt="">
                     </div>
                     <div class="details">
                         <p class="titre"> <?=$offre['poste']?> </p>
                         <p class="soustitre"><?= $offre['date_publication'] ." | ". $offre['nom_entreprise'] ?></p>
-                        <p class="moyentitre">Description : <?= $offre['Description']?></p>
-                        <p class="moyentitre">Competences : <?= $offre['competence']?></p>
+                        <p class="moyentitre">Description : <?=  couperPhrase($offre['Description'])?></p>
+                        <p class="moyentitre">Competences : <?= couperPhrase($offre['competence'])?></p>
                         <p class="moyentitre">Localite : <?= $offre['localite']?></p>
                     </div>
                 </a>

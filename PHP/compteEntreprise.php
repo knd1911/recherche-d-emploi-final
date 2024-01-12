@@ -10,9 +10,19 @@ $entreprise = $entreprises->fetch_assoc();
 
    
 
-$sql = mysqli_query($conn, "SELECT * FROM emploi   where id_entreprise = {$id}  ORDER BY date_publication DESC LIMIT 3 ");
+$sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
+FROM emploi
+JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
+WHERE entreprise.id_entreprise = {$id}
+ORDER BY date_publication DESC
+LIMIT 3 ");
 
-
+$postuler = mysqli_query($conn, "SELECT candidat.*, postuler.*
+FROM postuler
+JOIN candidat ON postuler.id_candidat = candidat.id_candidat
+WHERE id_entreprise = {$id}
+ORDER BY date_publication DESC
+LIMIT 3 ");
 
 
 
@@ -54,12 +64,12 @@ $sql = mysqli_query($conn, "SELECT * FROM emploi   where id_entreprise = {$id}  
             <?php if(mysqli_num_rows($sql)>0):  ?>
                 <?php while($row = $sql->fetch_assoc()): ?>
             <tr>
-                <td> <img  src="../image/<?= $row['image'] ?>"> </td>
+                <td> <img  src="../image/<?= $row['logo_entreprise'] ?>"> </td>
                 <td>
                     <h3><?= $row['poste'] ?></h3>
                     <h4><?= $row['date_publication'] ?></h4>
                     <h4><?= $row['competence'] ?></h4>
-                    <h4>54 vues</h4>
+                    <h4><?= $row['views'] ?> vue(5) </h4>
                 </td>
 
             </tr> 

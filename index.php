@@ -122,6 +122,12 @@ function route($requestUri) {
                   case '/gestion/entreprise/compte':
                     include('PHP/location/entrepriseCompte.php');
                     break; 
+                    case '/offre/entreprise/compte':
+                      include('PHP/location/entrepriseCompte.php');
+                      break; 
+                      case '/offre/compte':
+                        include('PHP/location/entrepriseCompte.php');
+                        break; 
                     case '/gestion/annonce/entreprise/compte':
                       include('PHP/location/entrepriseCompte.php');
                       break; 
@@ -134,6 +140,9 @@ function route($requestUri) {
                         case '/offre/voirPlus':
                           include('PHP/voirPlus.php');
                           break; 
+                          case '/postuler':
+                            include('PHP/postule.php');
+                            break; 
               
 
 
