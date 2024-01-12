@@ -54,7 +54,7 @@ ORDER BY emploi.date_publication DESC;");
                 <td>
                     <h3><?= $row['poste'] ?></h3>
                     <h4><?= $row['date_publication'] ?></h4>
-                    <h4>54 vues</h4>
+                    <h4><?=$row['views'] ?> vue(s)</h4>
                 </td>
                 <td>
                     <h3>supprimer</h3>

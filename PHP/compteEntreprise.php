@@ -85,10 +85,55 @@ LIMIT 3 ");
             <?php endif; ?>
         </table>
 </section>
+
     <div class="btn">
     
-            <a href="gestion/annonce">Gerer mes annonces</a>
         </div>
+</div>
+<div class="border">
+    <div class="head">
+        <h3>Les dernierres candidatures</h3>
+    </div>
+    <section>
+    <table>
+            <tr>
+                
+                
+                <th>Photo</th>
+                <th>Nom et Prenom</th>
+
+            </tr>
+            <?php if(mysqli_num_rows($postuler)>0):  ?>
+                <?php while($postule = $postuler->fetch_assoc()): ?>
+            <tr>
+                <td> <img  src="../image/<?= $postule['image'] ?>"> </td>
+                <td>
+                    <h3><?= $postule['nom_candidat'] ." ". $postule['prenom'] ?></h3>
+                    <h4><?= $postule['numero'] ?></h4>
+
+                    <h4><?= $postule['email'] ?></h4>
+    
+                </td>
+
+            </tr> 
+                <?php endwhile; ?>
+
+            <?php endif; ?>
+            <?php if(mysqli_num_rows($sql)==0):  ?>
+                <tr>
+                    <td>
+                <h3 >Vous n'avez pas encore poster une offre d'emploi</h3>
+
+                    </td>
+                </tr>
+            <?php endif; ?>
+
+        </table>
+</section>
+            <div class="btn">
+            <a href="gestion/annonce">Gerer</a>
+            </div>
+
 </div>
 <style>
         table{
