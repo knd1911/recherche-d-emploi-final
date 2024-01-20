@@ -14,7 +14,7 @@ $activites = mysqli_query($conn, "SELECT * FROM secteur_activite");
 $niveau_etudes = mysqli_query($conn, "SELECT * FROM niveau_etude");
 $regions = mysqli_query($conn, "SELECT * FROM zone_geo");
 
-
+$id_emploi=isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 
 if(isset($_POST['submit'])){
@@ -62,27 +62,32 @@ if(isset($_POST['submit'])){
 <form action="" method="post" enctype="multipart/form-data">
     <div class="form">
         <div class="head">
+            <?php if(isset($_GET['id'])): ?>
+        <h3>Modifier cette annonce</h3>
+
+            <?php else:?>
         <h3>Publier une annonces</h3>
+        <?php endif; ?>
         </div>
         <div class="name">
         <div class="post">
             <p class="titre">
                 Titre *:
             </p>
-            <input type="text" name="titre" placeholder="Le titre du poste rechecher" required>
+            <input type="text" name="titre" value="<?= (isset($_GET['id']))?$select['poste']:null ?>" placeholder="Le titre du poste rechecher" required>
         </div>
         <div class="post" style="margin-left:10px;max-width: 400px;">
             <p class="titre">
                 Nombre *:
             </p>
-            <input type="number"   name="nombre" placeholder="entrez le nombre de postes rechercher" required>
+            <input type="number" value="<?= (isset($_GET['id']))?$select['nombre']:null ?>"   name="nombre" placeholder="entrez le nombre de postes rechercher" required>
         </div>
         </div>
         
         <div class="post">
             <p class="titre">Type de contrats *:</p>
         <select name="contrat" id="">
-                <option value="">Selectionner le type de contrat rechercher</option>
+                <option value=""><?= (isset($_GET['id']))?$select['contrat']: 'Selectionner le type de contrat rechercher' ?></option>
                 <?php   while($contrat = $contrats->fetch_assoc()) :?>
 
                     <option value="<?=$contrat['type']?>"><?=$contrat['type']?></option>
@@ -93,7 +98,7 @@ if(isset($_POST['submit'])){
         <div class="post">
             <p class="titre">Secteur d'activite *:</p>
         <select name="secteur" id="">
-                <option value="">Selectionner le type de contrat rechercher</option>
+                <option value=""><?= (isset($_GET['id']))?$select['secteur_activite']: 'Selectionner le secteur d\'activiter rechercher' ?></option>
                 <?php   while($activite = $activites->fetch_assoc()) :?>
 
                     <option value="<?=$activite['dsc_secteur_activite']?>"><?=$activite['dsc_secteur_activite']?></option>
@@ -104,7 +109,7 @@ if(isset($_POST['submit'])){
         <div class="post">
             <p class="titre">Niveau requis *:</p>
         <select name="niveau" id="">
-                <option value="">Selectionner le niveau d'etude requis</option>
+                <option value=""><?= (isset($_GET['id']))?$select['niveau']: 'Selectionner le niveau requis' ?></option>
                 <?php   while($niveau_etude = $niveau_etudes->fetch_assoc()) :?>
 
                     <option value="<?=$niveau_etude['niveau']?>"><?=$niveau_etude['niveau']?></option>
@@ -116,12 +121,12 @@ if(isset($_POST['submit'])){
             <p class="titre">
                 Competences requise *:
             </p>
-            <textarea name="competences" id="" cols="30" rows="10" required placeholder="decrire les competences requise pour postuler"></textarea>
+            <textarea name="competences" id="" value="<?= (isset($_GET['id']))?$select['competence']: null ?>" cols="30" rows="10" required placeholder="decrire les competences requise pour postuler"></textarea>
         </div>
         <div class="post">
             <p class="titre">Localite *:</p>
         <select name="region" id="">
-        <option value="">Region</option>
+        <option value=""><?= (isset($_GET['id']))?$select['localite']: 'Region' ?></option>
             <?php   while($region = $regions->fetch_assoc()) :?>
 
                 <option value="<?=$region['lieu']?>"><?=$region['lieu']?></option>
@@ -133,7 +138,7 @@ if(isset($_POST['submit'])){
             <p class="titre">
                 Description du poste rechercher *:
             </p>
-            <textarea name="description" id="" cols="30" rows="10" required placeholder="decrire le postes rechercher"></textarea>
+            <textarea name="description" value="<?= (isset($_GET['id']))?$select['description']: null ?>" id="" cols="30" rows="10" required placeholder="decrire le postes rechercher"></textarea>
         </div>
         <div class="post">
             <p class="titre">
@@ -143,7 +148,14 @@ if(isset($_POST['submit'])){
         </div>
     </div>
     <div class="btn">
-        <input type="submit" name="submit">
+    <?php if(isset($_GET['id'])): ?>
+        <input type="submit" name="modifier">
+
+
+            <?php else:?>
+                <input type="submit" name="submit">
+        
+        <?php endif; ?>
     </div>
 </form>
 

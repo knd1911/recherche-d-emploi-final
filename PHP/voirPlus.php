@@ -1,6 +1,6 @@
 <?php 
 
-$id = (int)( $_GET['id']);
+
 
 require_once 'PHP/function/auth.php';
 
@@ -24,8 +24,8 @@ JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
 WHERE id_emploi = {$id}");
 
 $entreprise = $entreprises->fetch_assoc();
-$id_entreprise = (int)$entreprise['id_entreprise'];
-$id_candidat = (int)$_SESSION['candidat'];
+$id_entreprise = isset($_SESSION['entreprise']) ? (int)$_SESSION['entreprise'] : null;
+$id_candidat = isset($_SESSION['candidat']) ? (int)$_SESSION['candidat'] : null;
 
 if (isset($_POST["envoyer"])) {
     $deja = mysqli_query($conn, "SELECT * FROM postuler where id_emploi = {$id} and id_candidat = {$id_candidat}");
@@ -52,7 +52,7 @@ if (isset($_POST["envoyer"])) {
 
 ?>
 
-<pre><?= var_dump($deja); ?></pre>
+
 
 <?= isset($erreur) ?  "<h2 style=\"text-align:center;\">$erreur</h2>" : null ?>
 <?php if(isset($_SESSION['candidat'])): ?>

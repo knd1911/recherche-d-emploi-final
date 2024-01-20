@@ -1,1 +1,4 @@
-&é"'(-è_çà)=²1234567890°+²&~#{[|`\^@]}azertyuiop^$*qsdfghjklmùwxcvbn,;:! ^¤*mù;:!¨£%M./§
+PHP 8.2
+entreprise : compaore@gmail.com
+candidat : kouandaachraf01gmail.com
+lancer le serveur locale de php : php -S loacalhost:8000

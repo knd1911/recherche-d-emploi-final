@@ -63,9 +63,7 @@
     
     
    ?> 
-    <pre>
-        <?= var_dump($img_name) ?>
-    </pre>
+
     
     <form action="" method="POST" enctype="multipart/form-data">
     <div class="head">
@@ -90,13 +88,13 @@
                 <p class="titre">
                     Nom *:               
                 </p>
-                <input type="name" name="nom_ent" value="<?= $nom_ent ?: null ?>" required placeholder="Entrez  le nom de l'entreprise">
+                <input type="name" name="nom_ent" value="<?= isset($_POST['nom_ent']) ? $_POST['nom_ent'] : null ?>" required placeholder="Entrez  le nom de l'entreprise">
             </div>
             <div class="input">
                 <p class="titre">
                     Adresse *:               
                 </p>
-                <input type="adress" name="adresse" value="<?= $adress ?: null ?>" required placeholder="Entrez l'adresse de l'entreprise">
+                <input type="adress" name="adresse" value="<?= isset($_POST['adresse']) ? $_POST['adresse'] : null ?>" required placeholder="Entrez l'adresse de l'entreprise">
             </div>
 
          </div>
@@ -105,26 +103,26 @@
                 <p class="titre">
                     ville *:               
                 </p>
-                <input type="text" name="ville" value="<?= $ville ?: null ?>" required placeholder="Entrez la ville">
+                <input type="text" name="ville" value="<?= isset($_POST['ville']) ? $_POST['ville'] : null ?>" required placeholder="Entrez la ville">
             </div>
             <div class="input">
                 <p class="titre">
                     code postal:               
                 </p>
-                <input type="number" name="code_poste" value="<?= $code_poste ?: null ?>" >
+                <input type="number" name="code_poste" value="<?= isset($_POST['code_poste']) ? $_POST['code_poste'] : null ?>" >
             </div>
             <div class="input">
                 <p class="titre">
                     Site web de l'entreprise:               
                 </p>
-                <input type="text" name="site" value="<?= $site ?: null ?>" placeholder="Entrez la ville">
+                <input type="text" name="site" value="<?= isset($_POST['site']) ? $_POST['site'] : null ?>" placeholder="Entrez la ville">
             </div>
         </div>
         <div class="input">
                 <p class="titre">
                     Logo de l'entreprise :               
                 </p>
-                <input type="file" name="image" value="<?= $logo ?: null ?>">
+                <input type="file" name="image" value="<?= isset($_POST['image']) ? $_POST['image'] : null ?>">
             </div>
        </div>
 
@@ -159,21 +157,21 @@
                 <p class="titre">
                     Nom *:               
                 </p>
-                <input type="name" name="nom" value="<?= $nom ?: null ?>" required placeholder="Entrez votre nom">
+                <input type="name" name="nom" value="<<?= isset($_POST['nom']) ? $_POST['nom'] : null ?>" required placeholder="Entrez votre nom">
 
                 </div>
                 <div class="input">
                 <p class="titre">
                     Prenom *:               
                 </p>
-                <input type="name" name="prenom" value="<?= $prenom ?: null ?>" required placeholder="Entrez votre prenom">
+                <input type="name" name="prenom" value="<?= isset($_POST['prenom']) ? $_POST['prenom'] : null ?>" required placeholder="Entrez votre prenom">
 
                 </div>
                 <div class="input">
                 <p class="titre">
                     numero *:               
                 </p>
-                <input type="number" name="numero" value="<?= $numero ?: null ?>" required placeholder="Entrez votre numero">
+                <input type="number" name="numero" value="<?= isset($_POST['numero']) ? $_POST['numero'] : null ?>" required placeholder="Entrez votre numero">
 
                 </div>
             </div>
@@ -182,7 +180,7 @@
                 <p class="titre">
                     Fonction *:               
                 </p>
-                <input type="name" class="post" name="poste" value="<?= $poste ?: null ?>" required placeholder="Entrez votre poste">
+                <input type="name" class="post" name="poste" value="<?= isset($_POST['poste']) ? $_POST['poste'] : null ?>" required placeholder="Entrez votre poste">
 
                 </div>
 
@@ -191,7 +189,7 @@
                 <p class="titre">
                     Email *:               
                 </p>
-                <input type="email" name="email" value="<?= $email ?: null ?>" required placeholder="Entrez votre email">
+                <input type="email" name="email" value="<?= isset($_POST['email']) ? $_POST['email'] : null ?>" required placeholder="Entrez votre email">
             </div>
             <div class="input">
                 <p class="titre">

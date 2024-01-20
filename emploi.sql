@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : lun. 08 jan. 2024 à 10:09
+-- Généré le : ven. 12 jan. 2024 à 12:52
 -- Version du serveur : 8.0.35
 -- Version de PHP : 8.2.10-2ubuntu1
 
@@ -155,13 +155,31 @@ INSERT INTO `contrat` (`id_contrat`, `type`) VALUES
 
 CREATE TABLE `emploi` (
   `id_emploi` int NOT NULL,
+  `id_entreprise` int NOT NULL,
   `poste` varchar(250) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_contrat` int NOT NULL,
+  `contrat` varchar(250) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombre` int NOT NULL,
   `Description` longtext COLLATE utf8mb4_general_ci NOT NULL,
-  `competence` json NOT NULL,
-  `id_zone_geo` int NOT NULL,
-  `date_publication` timestamp NOT NULL
+  `competence` text COLLATE utf8mb4_general_ci NOT NULL,
+  `localite` varchar(250) COLLATE utf8mb4_general_ci NOT NULL,
+  `image` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `secteur_activite` varchar(250) COLLATE utf8mb4_general_ci NOT NULL,
+  `niveau` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_publication` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modification` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `views` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `emploi`
+--
+
+INSERT INTO `emploi` (`id_emploi`, `id_entreprise`, `poste`, `contrat`, `nombre`, `Description`, `competence`, `localite`, `image`, `secteur_activite`, `niveau`, `date_publication`, `date_modification`, `views`) VALUES
+(1, 3, 'Aide macon', 'CDD', 2, 'pour aider dans la constrution d\'un immeuble', 'pas de competences requises', 'Ouagadougou', 'WhatsApp Image 2023-12-28 at 02.07.13.jpeg', 'BTP, construction', 'Qualification avant bac', '2024-01-10 16:53:35', '2024-01-10 16:53:35', 5),
+(2, 3, 'Ingenieure en systeme d\'information et reseau', 'CDI', 2, 'Pour etre un administrateur de base de donnes', 'Avoir une licence en systeme d\'information et reseau', 'Ouagadougou', 'WhatsApp Image 2023-12-28 at 02.07.13.jpeg', 'Informatique, SSII, Internet', 'Bac+3', '2024-01-10 17:09:50', '2024-01-10 17:09:50', 1),
+(3, 4, 'Enseignant en Merise', 'Temps partiel', 2, 'Le métier d’enseignant en Merise consiste à enseigner la méthode de conception de systèmes d’information Merise à des étudiants. Les compétences requises pour être un enseignant en Merise sont variées et peuvent être classées en deux grandes catégories : compétences techniques et compétences interpersonnelles 1. Les enseignants en Merise doivent avoir des compétences techniques solides en informatique, notamment en programmation, en base de données, en réseaux, en sécurité informatique, etc. Ils doivent également être capables de communiquer efficacement avec les étudiants, de les motiver, de les aider à résoudre les problèmes, de les encourager à travailler en équipe, etc. En outre, les enseignants en Merise doivent être passionnés par leur travail, être patients, être organisés, être créatifs, être capables de travailler sous pression, etc', 'Les enseignants en Merise doivent avoir des compétences techniques solides en informatique, notamment en programmation, en base de données, en réseaux, en sécurité informatique, etc', 'Ouagadougou', '', 'Éducation, formation', '', '2024-01-11 16:38:24', '2024-01-11 16:38:24', 9),
+(4, 4, 'Enseignant en devellopement mobile', 'CDI', 1, 'Le développeur d’application mobile est un expert en création d’applications destinées à des supports mobiles, comme la tablette, le smartphone, ou encore les objets connectés. Il doit être parfaitement à l’aise avec les calculs d’algorithmes, la création de tests, et doit attester de solides connaissances en informatique et en mathématiques 1. En plus de ces compétences techniques, le professeur d’application mobile doit également posséder des compétences pédagogiques pour transmettre ses connaissances aux étudiants. Il doit faire preuve de pédagogie et adapter son discours à ses interlocuteurs. L’autonomie, l’imagination, la réactivité, l’écoute, la rigueur, la précision et la logique sont des qualités indispensables pour ce métier .', 'maitriser les langages de programmation les plus couramment utilisés pour le développement d’applications mobiles sont Java, Swift, Objective-C, Kotlin, C#, JavaScript, HTML, CSS, Python 23.', 'Ouagadougou', '', 'Éducation, formations', 'Bac+5', '2024-01-11 21:00:19', '2024-01-11 21:00:19', 92),
+(5, 4, 'Ingenieure en systeme d\'information et reseau', 'Stage', 1, 'Il semble que vous ayez mentionné votre domaine d\'études ou de travail en tant qu\'ingénieur en systèmes d\'information et réseau. C\'est un domaine passionnant qui englobe la conception, le déploiement et la gestion de systèmes informatiques et de réseaux au sein d\'une organisation. Les ingénieurs en systèmes d\'information et réseau peuvent être impliqués dans divers aspects, tels que la conception de l\'architecture réseau, la sécurité informatique, la gestion des bases de données, la virtualisation, la gestion de projet, et bien plus encore.', 'Compétences techniques :\r\n\r\nArchitecture réseau : Comprendre la conception, la mise en œuvre et la maintenance des infrastructures réseau.\r\nAdministration système : Gérer les systèmes d\'exploitation, les serveurs et les services associés.\r\nSécurité informatique : Protéger les systèmes et réseaux contre les menaces potentielles.\r\nVirtualisation : Maîtriser les technologies de virtualisation pour optimiser les ressources informatiques.\r\nGestion des bases de données : Connaître les bases de données et leurs opérations.\r\nDéveloppement de scripts/automatisation : Utiliser des langages de script pour automatiser des tâches répétitives.\r\nDépannage réseau : Identifier et résoudre les problèmes réseau.\r\nCompétences non techniques :\r\n\r\nGestion de projet : Planifier, exécuter et superviser des projets liés aux systèmes d\'information.\r\nCommunication : Excellentes compétences en communication pour expliquer des concepts techniques aux non-techniciens.\r\nAnalyse et résolution de problèmes : Identifier et résoudre efficacement les problèmes complexes.\r\nTravail d\'équipe : Collaborer avec des collègues, d\'autres départements et des parties prenantes externes.\r\nApprentissage continu : Les technologies évoluent rapidement, la capacité à apprendre de nouvelles compétences est essentielle.\r\nCompétences spécifiques au domaine :\r\n\r\nGestion de la mobilité : Pour les ingénieurs travaillant sur des réseaux sans fil et la connectivité mobile.\r\nCloud computing : Comprendre et travailler avec des services basés sur le cloud.\r\nInternet des objets (IoT) : Pour ceux impliqués dans des projets liés à l\'IoT.', 'Koudougou', 'banner3.jpg', 'Informatique, SSII, Internet', 'Bac+3', '2024-01-12 12:48:47', '2024-01-12 12:48:47', 1);
 
 -- --------------------------------------------------------
 
@@ -190,7 +208,10 @@ CREATE TABLE `entreprise` (
 --
 
 INSERT INTO `entreprise` (`id_entreprise`, `nom_entreprise`, `adresse_entreprise`, `email_entreprise`, `password_entreprise`, `logo_entreprise`, `site`, `ville`, `code_postal`, `nom`, `prenom`, `fonction`, `numero`) VALUES
-(1, 'Kouanda Achraf Kouanda', 'Ouagadougou,Somgande', 'kouandaachraf@gmail.com', 'dvsgfsg', 'dss', 'sdfrsdr', 'grgsr', 1234, 'gsrgse', 'rgsrgse', 'rgsrgs', 1234);
+(1, 'Kouanda Achraf Kouanda', 'Ouagadougou,Somgande', 'kouandaachraf@gmail.com', 'dvsgfsg', 'dss', 'sdfrsdr', 'grgsr', 1234, 'gsrgse', 'rgsrgse', 'rgsrgs', 1234),
+(2, 'knd', 'Ouagadougou,Somgande', 'odg@gmail.com', '63982e54a7aeb0d89910475ba6dbd3ca6dd4e5a1', '', ' www.site.bf', 'Ouagadougou', 12345, 'odg', 'vzrgsr', '', 12345678),
+(3, 'Achra KND', 'Burkina Faso, Ouahigouya, secteur 15(Gourga)', 'knd@gmail.com', '63982e54a7aeb0d89910475ba6dbd3ca6dd4e5a1', 'IMG_20210519_103835_4.jpg', ' www.site.bf', 'Ouahigouya', 12345, 'odg', 'vzrgsr', '', 12345678),
+(4, 'ESTA', 'Ouagadougou,Somgande', 'compaore@gmail.com', '63982e54a7aeb0d89910475ba6dbd3ca6dd4e5a1', 'banner3.jpg', 'www.esta.bf', 'Ouagadougou', 12345, 'COMPAORE', 'EZECKIEL', 'charge de communication et des relations exterierure', 64149097);
 
 -- --------------------------------------------------------
 
@@ -316,7 +337,44 @@ INSERT INTO `password_forget` (`id`, `email`, `token`) VALUES
 (14, 'Kouandaachraf05@gmail.com', '5f1c29db854a1db953350b470d716389'),
 (15, 'Kouandaachraf04@gmail.com', '5b11bd5b8cea351a3cc23eee1c7a1982'),
 (16, 'kouandaachraf02@gmail.com', '2fa8e3dc674a52f5a0fd3d809fc3f44f'),
-(17, 'Kouandaachraf01@gmail.com', '7dfd08bacbb665ba4540f60b8df0818d');
+(17, 'Kouandaachraf01@gmail.com', '7dfd08bacbb665ba4540f60b8df0818d'),
+(18, 'knd@gmail.com', 'b572e63e7d720cb4b2a792fa61dd5890'),
+(19, 'knd@gmail.com', 'ff238c3da7aa9c3963bdbfada722e0d8'),
+(20, 'knd@gmail.com', 'bd5d49b629f9e7ec3b0499ac308fff09'),
+(21, 'knd@gmail.com', 'fc87e09ce0d3d7cdd4a8e5ba104a9084'),
+(22, 'knd@gmail.com', '2f9207e96f0fa1cfe63864598d6f924c'),
+(23, 'knd@gmail.com', '1515c72feff8687a0451ad722ca19e3c'),
+(24, 'knd@gmail.com', '10d1ac26137c5dacba3b8586d410182f'),
+(25, 'knd@gmail.com', '351d0a6ca89d9c3daf512c76475e9b95'),
+(26, 'knd@gmail.com', 'f3a424691e0297824996f1a06cefccb2'),
+(27, 'knd@gmail.com', 'c80d6ccac9ec6804b96fcc672e969e42'),
+(28, 'knd@gmail.com', 'ac43a9f0d18dc3834a6f441e04479ac5'),
+(29, 'kouandaachraf01@gmail.com', '3effbaf249a89d11148657468b75114f');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `postuler`
+--
+
+CREATE TABLE `postuler` (
+  `id_postuler` int NOT NULL,
+  `id_emploi` int NOT NULL,
+  `id_candidat` int NOT NULL,
+  `id_entreprise` int NOT NULL,
+  `cv` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_publication` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `postuler`
+--
+
+INSERT INTO `postuler` (`id_postuler`, `id_emploi`, `id_candidat`, `id_entreprise`, `cv`, `date_publication`) VALUES
+(2, 4, 2, 4, 'reportage-odess_mosan-startupbrics_vf2-1.pdf', '2024-01-12 00:53:44'),
+(7, 4, 10, 4, 'reportage-odess_mosan-startupbrics_vf2-1.pdf', '2024-01-12 00:54:06'),
+(8, 3, 2, 4, 'reportage-odess_mosan-startupbrics_vf2-1.pdf', '2024-01-12 00:54:17'),
+(9, 1, 2, 3, 'reportage-odess_mosan-startupbrics_vf2-1.pdf', '2024-01-12 00:54:26');
 
 -- --------------------------------------------------------
 
@@ -328,6 +386,18 @@ CREATE TABLE `proposer` (
   `id_entreprise` int NOT NULL,
   `id_emploi` int NOT NULL,
   `date_proposer` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `publier_offre`
+--
+
+CREATE TABLE `publier_offre` (
+  `id_entreprise` int NOT NULL,
+  `id_emploi` int NOT NULL,
+  `date` timestamp NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -475,8 +545,10 @@ ALTER TABLE `contrat`
 --
 ALTER TABLE `emploi`
   ADD PRIMARY KEY (`id_emploi`),
-  ADD KEY `id_zone_geo` (`id_zone_geo`),
-  ADD KEY `id_contrat` (`id_contrat`);
+  ADD KEY `id_zone_geo` (`localite`),
+  ADD KEY `contrat` (`contrat`),
+  ADD KEY `secteur_activite` (`secteur_activite`),
+  ADD KEY `id_entreprise` (`id_entreprise`);
 
 --
 -- Index pour la table `entreprise`
@@ -519,11 +591,27 @@ ALTER TABLE `password_forget`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `postuler`
+--
+ALTER TABLE `postuler`
+  ADD PRIMARY KEY (`id_postuler`),
+  ADD KEY `id_emploi` (`id_emploi`),
+  ADD KEY `id_candidat` (`id_candidat`),
+  ADD KEY `id_entreprise` (`id_entreprise`);
+
+--
 -- Index pour la table `proposer`
 --
 ALTER TABLE `proposer`
   ADD PRIMARY KEY (`id_entreprise`,`id_emploi`),
   ADD KEY `FK_proposer_id_emploi` (`id_emploi`);
+
+--
+-- Index pour la table `publier_offre`
+--
+ALTER TABLE `publier_offre`
+  ADD KEY `id_entreprise` (`id_entreprise`),
+  ADD KEY `id_emploi` (`id_emploi`);
 
 --
 -- Index pour la table `recherche`
@@ -565,13 +653,13 @@ ALTER TABLE `contrat`
 -- AUTO_INCREMENT pour la table `emploi`
 --
 ALTER TABLE `emploi`
-  MODIFY `id_emploi` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_emploi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `entreprise`
 --
 ALTER TABLE `entreprise`
-  MODIFY `id_entreprise` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_entreprise` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `experience`
@@ -595,7 +683,13 @@ ALTER TABLE `niveau_etude`
 -- AUTO_INCREMENT pour la table `password_forget`
 --
 ALTER TABLE `password_forget`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT pour la table `postuler`
+--
+ALTER TABLE `postuler`
+  MODIFY `id_postuler` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `proposer`
@@ -637,8 +731,7 @@ ALTER TABLE `a_secteur_active`
 -- Contraintes pour la table `emploi`
 --
 ALTER TABLE `emploi`
-  ADD CONSTRAINT `emploi_ibfk_1` FOREIGN KEY (`id_zone_geo`) REFERENCES `zone_geo` (`id_zone_geo`),
-  ADD CONSTRAINT `emploi_ibfk_2` FOREIGN KEY (`id_contrat`) REFERENCES `contrat` (`id_contrat`);
+  ADD CONSTRAINT `emploi_ibfk_1` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`);
 
 --
 -- Contraintes pour la table `niveau`
@@ -649,11 +742,26 @@ ALTER TABLE `niveau`
   ADD CONSTRAINT `niveau_ibfk_3` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`);
 
 --
+-- Contraintes pour la table `postuler`
+--
+ALTER TABLE `postuler`
+  ADD CONSTRAINT `postuler_ibfk_1` FOREIGN KEY (`id_emploi`) REFERENCES `emploi` (`id_emploi`),
+  ADD CONSTRAINT `postuler_ibfk_2` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`),
+  ADD CONSTRAINT `postuler_ibfk_3` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`);
+
+--
 -- Contraintes pour la table `proposer`
 --
 ALTER TABLE `proposer`
   ADD CONSTRAINT `FK_proposer_id_emploi` FOREIGN KEY (`id_emploi`) REFERENCES `emploi` (`id_emploi`),
   ADD CONSTRAINT `FK_proposer_id_entreprise` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`);
+
+--
+-- Contraintes pour la table `publier_offre`
+--
+ALTER TABLE `publier_offre`
+  ADD CONSTRAINT `publier_offre_ibfk_1` FOREIGN KEY (`id_entreprise`) REFERENCES `entreprise` (`id_entreprise`),
+  ADD CONSTRAINT `publier_offre_ibfk_2` FOREIGN KEY (`id_emploi`) REFERENCES `emploi` (`id_emploi`);
 
 --
 -- Contraintes pour la table `recherche`

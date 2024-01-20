@@ -5,22 +5,33 @@ require_once 'PHP/config/config.php';
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
-    $entrepise = mysqli_query($conn, "SELECT email_entreprise FROM entreprise where email_entreprise='{$email}'");
-    $candidat = mysqli_query($conn, "SELECT email FROM candidat where email = '{$email}'");
+    $entrepise = mysqli_query($conn, "SELECT * FROM entreprise where email_entreprise='{$email}'");
+    $candidat = mysqli_query($conn, "SELECT * FROM candidat where email = '{$email}'");
         if(mysqli_num_rows($candidat) > 0 ){
+            $reni = mysqli_fetch_assoc($candidat);
             $token = bin2hex(random_bytes(16));
             $entrepise_token = mysqli_query($conn, "INSERT INTO `password_forget` (`email`, `token`)
                               VALUES ('{$email}', '{$token}')");
+
+               if ($entrepise_token) {
+                $_SESSION['renitialise_candidat'] = $reni['id_candidat']; 
+                unset($_SESSION['renitialise_entreprise']);
+               }               
 
            setcookie('reset_token', $token, time() + 3600, '/', '', true, true);
             header("Location:renitialise");
             exit;
 
         }if(mysqli_num_rows($entrepise) > 0 ){
+            $reni = mysqli_fetch_assoc($entrepise);
+
             $token = bin2hex(random_bytes(16));
             $entrepise_token = mysqli_query($conn, "INSERT INTO `password_forget` (`email`, `token`)
                               VALUES ('{$email}', '{$token}')");
-
+                if($entrepise_token){
+                    $_SESSION['renitialise_entreprise'] = $reni['id_entreprise']; 
+                unset($_SESSION['renitialise_candidat']);  
+                }
            setcookie('reset_token', $token, time() + 3600, '/', '', true, true);
             header("Location:renitialise");
             exit;

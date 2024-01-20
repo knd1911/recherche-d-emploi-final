@@ -1,7 +1,8 @@
-<?php 
+<?php
 require_once 'PHP/function/auth.php';
 forcer_utilisateur_connecte();
 require_once 'PHP/config/config.php';
+
 $niveau_etude = mysqli_query($conn, "SELECT * FROM niveau_etude");
 $expereinces = mysqli_query($conn, "SELECT * FROM experience");
 $regions = mysqli_query($conn, "SELECT * FROM zone_geo");
@@ -9,101 +10,94 @@ $metiers = mysqli_query($conn, "SELECT * FROM metier");
 $contrat = mysqli_query($conn, "SELECT * FROM contrat");
 $activites = mysqli_query($conn, "SELECT * FROM secteur_activite");
 
+if (isset($_POST['submit'])) {
+    $niveau = mysqli_real_escape_string($conn, $_POST['niveau']);
+    
+    $formation_titre = isset($_POST['titre_formation']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['titre_formation']) : [];
+$formation_lieux = isset($_POST['ecole_formation']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['ecole_formation']) : [];
+$formation_date_debut = isset($_POST['date_debut_formation']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['date_debut_formation']) : [];
+$formation_date_fin = isset($_POST['date_fin_formation']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['date_fin_formation']) : [];
+$formation_description = isset($_POST['description']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['description']) : [];
+$nom_post = isset($_POST['nomPost']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['nomPost']) : [];
+$entreprise = isset($_POST['nom_entreprise']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['nom_entreprise']) : [];
+$exp_date_debut = isset($_POST['date_debut_exp']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['date_debut_exp']) : [];
+$exp_date_fin = isset($_POST['date_fin_exp']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['date_fin_exp']) : [];
+$exp_description = isset($_POST['description_exp']) ? array_map(function($value) use ($conn) { return mysqli_real_escape_string($conn, $value); }, $_POST['description_exp']) : [];
 
-if(isset($_POST['submit'])){
 
-    $niveau = $_POST['niveau'];
-    $formation_titre = $_POST['titre_formation'];
-    $formation_lieux = $_POST['ecole_formation'];
-    $formation_date_debut = $_POST['date_debut_formation'];
-    $formation_date_fin = $_POST['date_fin_formation'];
-    $formation_description = $_POST['description'];
-    $exp = $_POST['Ex'];
-    $nom_post = $_POST['nomPost'];
-    $entreprise = $_POST['nom_entreprise'];
-    $exp_date_debut = $_POST['date_debut_exp'];
-    $exp_date_fin = $_POST['date_fin_exp'];
-    $exp_description = $_POST['description_exp'];
-    $id_metier = $_POST['metier'];
-    $id_region = $_POST['region'];
-    $type_contrat = $_POST["contrat"];
+    $exp = mysqli_real_escape_string($conn, $_POST['Ex']);
+    $id_metier = mysqli_real_escape_string($conn, $_POST['metier']);
+    $id_region = mysqli_real_escape_string($conn, $_POST['region']);
+    $type_contrat = mysqli_real_escape_string($conn, $_POST["contrat"]);
 
     $id_candidat = (int)$_SESSION['candidat'];
     $sql_select = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
     $result_select = mysqli_query($conn, $sql_select);
 
     if (isset($_FILES["image"])) {
-           
-        
-        $img_name = $_FILES['image']['name'];
-            $img_type = $_FILES['image']['type'];
-            $tmp_name = $_FILES['image']['tmp_name'];
+        $img_name = mysqli_real_escape_string($conn, $_FILES['image']['name']);
+        $img_type = mysqli_real_escape_string($conn, $_FILES['image']['type']);
+        $tmp_name = mysqli_real_escape_string($conn, $_FILES['image']['tmp_name']);
 
+        $img_explode = explode('.', $img_name);
+        $img_ext = end($img_explode);
 
-            $img_explode = explode('.',$img_name);
-            $img_ext = end($img_explode);
+        $extensions = ["jpeg", "png", "jpg"];
+        if (in_array($img_ext, $extensions) === true) {
+            $retour =  move_uploaded_file($tmp_name, "image/".$img_name);
+            if ($retour) {
+                if ($result_select) {
+                    $row = $result_select->fetch_assoc();
+                    $formations_json = $row['formation'];
+                    $expereinces_json = $row['exp_pro'];
 
-            $extensions = ["jpeg", "png", "jpg"];
-            if(in_array($img_ext, $extensions) === true){
-                $retour =  move_uploaded_file($tmp_name,"image/".$img_name);
-                    if($retour) {
-                        
-                        if ($result_select) {
-                            $row = $result_select->fetch_assoc();
-                            $formations_json = $row['formation'];
-                            $expereinces_json = $row['exp_pro'];
-                            // Ajouter la nouvelle formation au tableau JSON
-                            $formations_array = json_decode($formations_json, true) ?: [];
-                            $experiences_array = json_decode($expereinces_json, true) ?: [];
-                            $nouvelle_formation = [
-                                'titre' => $formation_titre,
-                                'date_debut' => $formation_date_debut,
-                                'date_fin' => $formation_date_fin,
-                                'description' => $formation_description
-                            ];
-                            $nouvelle_exp = [
-                                'titre' => $nom_post,
-                                'date_debut' => $exp_date_debut,
-                                'date_fin' => $exp_date_fin,
-                                'description' => $exp_description
-                            ];
-                            $formations_array[] = $nouvelle_formation;
-                            $experiences_array[] = $nouvelle_exp;
-                    
-                            // Mettre à jour la base de données avec le nouveau tableau JSON
-                            $formations_json_updated = (json_encode($formations_array));
-                            $exp_json_updated = (json_encode($experiences_array));
-                            $sql_update = "UPDATE candidat SET image ='{$img_name}', id_niveau_etude='{$niveau}', formation = '{$formations_json_updated}', exp_pro = '{$exp_json_updated}',
-                                                                id_exp = '{$exp}', id_metier = '{$id_metier}', type_contrat = '{$type_contrat}'
-                            WHERE id_candidat = {$id_candidat}";
-                             
-                           $result_update = mysqli_query($conn,$sql_update);
-                    
-                            if ($result_update) {
-                               header("location:/compte");
-                            } else {
-                                echo "Erreur lors de la mise à jour de la base de données : " . $conn->error;
-                            }
-                        } else {
-                            echo "Erreur lors de la récupération des données actuelles : " . $conn->error;
-                        }
+                    // Ajouter la nouvelle formation au tableau JSON
+                    $formations_array = json_decode($formations_json, true) ?: [];
+                    $experiences_array = json_decode($expereinces_json, true) ?: [];
 
+                    $nouvelle_formation = [
+                        'titre' => $formation_titre,
+                        'date_debut' => $formation_date_debut,
+                        'date_fin' => $formation_date_fin,
+                        'description' => $formation_description
+                    ];
 
+                    $nouvelle_exp = [
+                        'titre' => $nom_post,
+                        'date_debut' => $exp_date_debut,
+                        'date_fin' => $exp_date_fin,
+                        'description' => $exp_description
+                    ];
+
+                    $formations_array[] = $nouvelle_formation;
+                    $experiences_array[] = $nouvelle_exp;
+
+                    // Mettre à jour la base de données avec le nouveau tableau JSON
+                    $formations_json_updated = mysqli_real_escape_string($conn, json_encode($formations_array));
+                    $exp_json_updated = mysqli_real_escape_string($conn, json_encode($experiences_array));
+
+                    $sql_update = "UPDATE candidat SET image ='{$img_name}', id_niveau_etude='{$niveau}', formation = '{$formations_json_updated}', exp_pro = '{$exp_json_updated}',
+                                        id_exp = '{$exp}', id_metier = '{$id_metier}', type_contrat = '{$type_contrat}'
+                    WHERE id_candidat = {$id_candidat}";
+
+                    $result_update = mysqli_query($conn, $sql_update);
+
+                    if ($result_update) {
+                        header("location:/compte");
                     } else {
-                        echo"donnees non poster";
+                        echo "Erreur lors de la mise à jour de la base de données : " . mysqli_error($conn);
                     }
+                } else {
+                    echo "Erreur lors de la récupération des données actuelles : " . mysqli_error($conn);
+                }
+            } else {
+                echo "Données non postées";
             }
-        
-        } 
-
-
+        }
+    }
 }
-
-
-
-
-
 ?>
+
 
 <form action="" method="post" enctype="multipart/form-data">
 <div class="forms">

@@ -17,11 +17,20 @@ foreach($colonnes as $colonne){
 $sql_select = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
 $result = mysqli_query($conn,$sql_select);
 
+$postuler = mysqli_query($conn, "SELECT candidat.*, postuler.*
+FROM postuler
+JOIN candidat ON postuler.id_candidat = candidat.id_candidat
+WHERE candidat.id_candidat = {$id_candidat}
+ORDER BY date_publication DESC
+LIMIT 3 ");
+
 
 ?>
 
 
-
+<pre>
+    <?= var_dump($postuler); ?>
+</pre>
 <div class="forms">
 <div class="border">
 <div class="head">
@@ -33,11 +42,12 @@ $result = mysqli_query($conn,$sql_select);
         <img src="../image/<?= $candidat['image'] ?>" alt="">
     </div>
     <div class="element">
-        <h3>Nom: KOUANDA</h3>
-        <h3>Prenom : Achraf</h3>
-        <h3>Email : kouandaachraf01@gmail.com</h3>
-        <h3>Adresse : Ouagadougou, somgande</h3>
-        <h3>Nationalite: Burkinabe</h3>
+        <?php foreach($result as $name): ?>
+        <h3>Nom: <?= $name['nom_candidat'] ?></h3>
+        <h3>Prenom : <?= $name['prenom'] ?></h3>
+        <h3>Email : <?= $name['email'] ?></h3>
+        <h3>Telephone : <?= $name['numero'] ?></h3>
+        <?php endforeach; ?>
     </div>
 </div>
 </div>
@@ -60,14 +70,15 @@ $result = mysqli_query($conn,$sql_select);
 <?php endif; ?>
 </div>
 </div>
+<?php while ($row = $result->fetch_assoc()): 
+        $formationData = json_decode($row['formation'], true);
+        $expData = json_decode($row['exp_pro'], true);
+        ?>
 <div class="border">
     <div class="head">
         <h3>Mes criteres</h3>
     </div>
-    <?php while ($row = $result->fetch_assoc()): 
-        $formationData = json_decode($row['formation'], true);
-        $expData = json_decode($row['exp_pro'], true);
-        ?>
+   
             <div style="display: flex;justify-content:space-between;">
                
                 <div>
@@ -112,18 +123,51 @@ $result = mysqli_query($conn,$sql_select);
     <div class="head">
         <h3>Suivie des candidatures</h3>
     </div>
-    <h3>vous n'avez pas envoyer de candidature</h3>
-    <div class="btn">
+    <?php if(mysqli_num_rows($postuler)): ?>
+                <section>
+    <table>
+            <tr>
+                
+                
+                <th>Photo</th>
+                <th>Nom et Prenom</th>
+
+            </tr>
+                <?php while($postule = $postuler->fetch_assoc()): ?>
+            <tr>
+                <td> <img  src="../image/<?= $postule['image'] ?>"> </td>
+                <td>
+                    <h3><?= $postule['nom_candidat'] ." ". $postule['prenom'] ?></h3>
+                    <h4><?= $postule['numero'] ?></h4>
+
+                    <h4><?= $postule['email'] ?></h4>
+    
+                </td>
+
+            </tr> 
+                <?php endwhile; ?>
+
+        </table>
+</section>
+        <div class="btn">
     
             <a href="#">Gerer mes candidatures</a>
         </div>
+    <?php else: ?>
+    <h3>vous n'avez pas encore postuler a une offre d'emploi</h3>
+    <?php endif; ?>
+    
 </div>
 <style>
+    .element{
+        margin: 25px;
+    }
     .img img{
-        width: 200px;
-        height: 200px;
+        width: 190px;
+        height: 180px;
         border-radius: 20px;
         margin: 20px;
+        border: 2px solid #ccc;
     }
     .cv{
         background-color: #fff;

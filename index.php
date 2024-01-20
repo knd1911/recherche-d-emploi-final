@@ -1,6 +1,6 @@
 <?php
-require_once'PHP/function/auth.php';
 ob_start();
+require_once'PHP/function/auth.php';
 est_connect();
 $serveur = "localhost"; 
 $nomUtilisateur = "test";
@@ -10,22 +10,9 @@ $nomBaseDeDonnees = "emploi";
 $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
    or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
 
-   //unset($_SESSION['candidat']);
-                $id=$_SESSION['candidat']?:null;
-/*
-if (!isset($_SERVER["REQUEST_URI"])) {
-    ob_start();
-    require_once 'PHP/accueil.php';
-    $contenu = ob_get_clean();
-}else
-if (isset($_SERVER["REQUEST_URI"])) {
-    $page = $_SERVER["REQUEST_URI"];
-    if($page == '/test' ){
-        ob_start();
-        require_once 'test.php';
-        $contenu = ob_get_clean();
-    }
-}*/
+
+   $id = isset($_SESSION['candidat']) ? $_SESSION['candidat'] : null;
+
 $requestUri = $_SERVER["REQUEST_URI"];
 $getUri = $_GET;
 
@@ -44,6 +31,9 @@ function route($requestUri) {
               case '/offre/voirPlus/inscription':
                 include('PHP/location/inscription.php');
                 break;
+                case '/inscription/inscription':
+                  include('PHP/location/inscription.php');
+                  break;
         case '/inscription/candidat':
             include('PHP/candidatLogin.php');
             break;
@@ -125,15 +115,21 @@ function route($requestUri) {
                     case '/offre/entreprise/compte':
                       include('PHP/location/entrepriseCompte.php');
                       break; 
-                      case '/offre/compte':
+                      case '/offre/comptes':
                         include('PHP/location/entrepriseCompte.php');
                         break; 
+                        case '/offre/compte':
+                          include('PHP/location/comptes.php');
+                          break; 
                     case '/gestion/annonce/entreprise/compte':
                       include('PHP/location/entrepriseCompte.php');
                       break; 
                     case '/gestion/annonce/publier':
                       include('PHP/GestionAnonnces/publierAnonnce.php');
                       break; 
+                      case '/gestion/annonce/modifier':
+                        include('PHP/GestionAnonnces/publierAnonnce.php');
+                        break; 
                       case '/recherche':
                         include('PHP/recherche.php');
                         break; 
@@ -158,9 +154,7 @@ $contenu = ob_get_clean();
 
 
 ?>
-<pre>
-  <?= var_dump($_POST) ?>
-</pre>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,6 +180,9 @@ $contenu = ob_get_clean();
           <?php if(isset($_SESSION["candidat"])): ?>
           <a href="compte">compte</a></li>
           <?php elseif(isset($_SESSION["entreprise"])) :?>
+            <li>
+            <a class="sub-btn" href="/gestion/annonce/publier">Publier une offre</a></li>
+            <li>
           <a href="entreprise/compte">compte</a></li>
           <?php endif; ?>
         <li><a href="deconnecte">Se deconnecter</a></li>

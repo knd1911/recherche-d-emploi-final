@@ -34,9 +34,7 @@
     
     
    ?> 
-    <pre>
-        <?= var_dump($_POST) ?>
-    </pre>
+
     
     <form action="" method="POST">
         <div class="head">
@@ -64,19 +62,19 @@
                 <p class="titre">
                     Prenom *:               
                 </p>
-                <input type="name" name="prenom" value="<?= $prenom ?: null ?>" required placeholder="Entrez votre prenom">
+                <input type="name" name="prenom" value="<?= isset($_POST['prenom']) ? $_POST['prenom'] : null ?>" required placeholder="Entrez votre prenom">
             </div>
             <div class="input">
                 <p class="titre">
                     Nom *:               
                 </p>
-                <input type="name" name="nom" value="<?= $nom ?: null ?>" required placeholder="Entrez votre nom">
+                <input type="name" name="nom" value="<?= isset($_POST['nom']) ? $_POST['nom'] : null ?>" required placeholder="Entrez votre nom">
             </div>
             <div class="input">
                 <p class="titre">
                     Numero *:               
                 </p>
-                <input type="number" name="numero" value="<?= $numero ?: null ?>" required placeholder="Entrez votre numero">
+                <input type="number" name="numero" value="<?= isset($_POST['numero']) ? $_POST['numero'] : null ?>" required placeholder="Entrez votre numero">
             </div>
          </div>
         <div class="name">
@@ -84,7 +82,7 @@
                 <p class="titre">
                     Email *:               
                 </p>
-                <input type="email" name="email" value="<?= $email ?: null ?>" required placeholder="Entrez votre email">
+                <input type="email" name="email" value="<?= isset($_POST['email']) ? $_POST['email'] : null ?>" required placeholder="Entrez votre email">
             </div>
             <div class="input">
                 <p class="titre">

@@ -3,7 +3,7 @@
             if(session_status() == PHP_SESSION_NONE){
                 session_start();
             }
-            return !empty($_SESSION["candidat"] || $_SESSION["entreprise"]);
+            return isset($_SESSION["candidat"]) || isset($_SESSION["entreprise"]);
         }
         
         function forcer_utilisateur_connecte():void{

@@ -11,19 +11,29 @@ $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees
 if (isset($_COOKIE['reset_token'])) {
     $token = $_COOKIE['reset_token'];
 }
+
 if (isset($_POST['submit'])) {
     $pass =sha1(md5($_POST['password'])); 
-
+    
     $token = $_POST['token'];
     
+    if(isset($_SESSION['renitialise_entreprise'])){
+        $sql_password = mysqli_query($conn, "UPDATE entreprise SET password_entreprise = '{$pass}' WHERE email_entreprise IN (SELECT email FROM password_forget WHERE token = '{$token}')");
+    
+        if ($sql_password) {
+            header('Location:/login');
+        }
+    }
+    if(isset($_SESSION['renitialise_candidat'])){
+            $sql_password = ("UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')");
+        if ($sql_password) {
+            header('Location:/login');
+        }
+    }
 
     // Mettre à jour le mot de passe dans la base de données
-    $sql_password = "UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')";
-    $sql_password = "UPDATE entreprise SET password_entreprise = '{$pass}' WHERE email_entreprise IN (SELECT email FROM password_forget WHERE token = '{$token}')";
-    $sql_update_password=mysqli_query($conn, $sql_password);
-    if ($sql_update_password) {
-        header('Location:/login');
-    }
+    //$sql_password = ("UPDATE candidat SET password = '{$pass}' WHERE email IN (SELECT email FROM password_forget WHERE token = '{$token}')");
+    
 }
 
 ?>

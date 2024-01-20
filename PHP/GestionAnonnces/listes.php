@@ -57,9 +57,9 @@ ORDER BY emploi.date_publication DESC;");
                     <h4><?=$row['views'] ?> vue(s)</h4>
                 </td>
                 <td>
-                    <h3>supprimer</h3>
-                    <h3>modifier</h3>
-                    <h3>Voir</h3>
+                    <h3><a href="annonce/modifier?id=<?=$row['id_emploi']?>">Modifier</a></h3>
+                    <h3><a href="gestion/offre/supprimer">Modifier</a></h3>
+                    <h3><a href="/offre/voirPlus?id=<?=$row['id_emploi']?>">voir Plus</a></h3>
                 </td>
             </tr> 
                 <?php endwhile; ?>
@@ -100,7 +100,7 @@ ORDER BY emploi.date_publication DESC;");
         border-radius: 20px;
         position: fixed;
         left: 0;
-        height: 400px;
+        height: 200px;
     }
     table{
     border-collapse: collapse;

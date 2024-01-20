@@ -24,7 +24,7 @@ $nomBaseDeDonnees = "emploi";
 $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
 or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
 
-$id = (int)$_SESSION['entreprise'] ;
+$id = isset($_SESSION['entreprise']) ? (int)$_SESSION['entreprise'] : null;
 
 
 

@@ -55,7 +55,7 @@ if (isset($_POST['submit'])) {
                 <p class="titre">
                     Email *:               
                 </p>
-                <input type="email" name="email" value="<?= $_POST['email'] ?: null ?>" required placeholder="Entrez votre email">
+                <input type="email" name="email" value="<?= isset($_POST['email'] )? $_POST['email'] : null ?>" required placeholder="Entrez votre email">
             </div>
             <div class="input">
                 <p class="titre">
