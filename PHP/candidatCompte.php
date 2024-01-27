@@ -1,5 +1,7 @@
 <?php 
 require_once'PHP/function/auth.php';
+require_once 'PHP/function/couperPhrase.php';
+
 forcer_utilisateur_connecte();
 $id_candidat = (int)$_SESSION['candidat'];
 require_once 'PHP/config/config.php';
@@ -15,22 +17,24 @@ foreach($colonnes as $colonne){
 }
 
 $sql_select = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
-$result = mysqli_query($conn,$sql_select);
+$results = mysqli_query($conn,$sql_select);
 
-$postuler = mysqli_query($conn, "SELECT candidat.*, postuler.*
+$sql_selects = "SELECT * FROM candidat WHERE id_candidat = {$id_candidat}";
+$result = mysqli_query($conn,$sql_selects);
+
+$postuler = mysqli_query($conn, "SELECT emploi.*, postuler.*, entreprise.*
 FROM postuler
-JOIN candidat ON postuler.id_candidat = candidat.id_candidat
-WHERE candidat.id_candidat = {$id_candidat}
-ORDER BY date_publication DESC
-LIMIT 3 ");
+JOIN entreprise ON postuler.id_entreprise = entreprise.id_entreprise
+JOIN emploi ON emploi.id_emploi = postuler.id_emploi
+WHERE id_candidat = {$id_candidat}
+ORDER BY postuler.date_publication DESC
+LIMIT 3");
 
 
 ?>
 
 
-<pre>
-    <?= var_dump($postuler); ?>
-</pre>
+
 <div class="forms">
 <div class="border">
 <div class="head">
@@ -42,7 +46,7 @@ LIMIT 3 ");
         <img src="../image/<?= $candidat['image'] ?>" alt="">
     </div>
     <div class="element">
-        <?php foreach($result as $name): ?>
+        <?php foreach($results as $name): ?>
         <h3>Nom: <?= $name['nom_candidat'] ?></h3>
         <h3>Prenom : <?= $name['prenom'] ?></h3>
         <h3>Email : <?= $name['email'] ?></h3>
@@ -78,7 +82,7 @@ LIMIT 3 ");
     <div class="head">
         <h3>Mes criteres</h3>
     </div>
-   
+    
             <div style="display: flex;justify-content:space-between;">
                
                 <div>
@@ -94,7 +98,7 @@ LIMIT 3 ");
             <div>
             <h1>Experience profesionelle</h1>
         <?php foreach ($expData as $exp): ?>
-                <h3>Titre : <?=$exp['titre'][0]?></h3>
+                <h3>Titre : <?=  $exp['titre'][0]?></h3>
         <h3>Date de debut <?= $exp['date_debut'][0] ?></h3>
         <h3>Date de fin <?= $exp['date_fin'][0] ?></h3>
         <h3>Description <?= $exp['description'][0] ?></h3>
@@ -124,38 +128,34 @@ LIMIT 3 ");
         <h3>Suivie des candidatures</h3>
     </div>
     <?php if(mysqli_num_rows($postuler)): ?>
-                <section>
-    <table>
-            <tr>
+        <div class="colonne">
+            <?php foreach($postuler as $offre) : ?>
+
+                <a href="/offre/voirPlus?id=<?=$offre['id_emploi']?>" class="content">
+                    
+                    <div class="image">
+                        <img src="image/<?=$offre['logo_entreprise']?>" alt="">
+                    </div>
+                    <div class="details">
+                        <p class="titre"> <?=$offre['poste']?> </p>
+                        <p class="soustitre"><?= $offre['date_publication'] ." | ". $offre['nom_entreprise'] ?></p>
+                        <p class="moyentitre">Description : <?=  couperPhrase($offre['Description'])?></p>
+                        <p class="moyentitre">Competences : <?= couperPhrase($offre['competence'])?></p>
+                        <p class="moyentitre">Localite : <?= $offre['localite']?></p>
+                        <p class="titre">Status : <?= $offre['status']?></p>
+                    </div>
+                </a>
                 
-                
-                <th>Photo</th>
-                <th>Nom et Prenom</th>
+            <?php endforeach; ?>
+        </div>
 
-            </tr>
-                <?php while($postule = $postuler->fetch_assoc()): ?>
-            <tr>
-                <td> <img  src="../image/<?= $postule['image'] ?>"> </td>
-                <td>
-                    <h3><?= $postule['nom_candidat'] ." ". $postule['prenom'] ?></h3>
-                    <h4><?= $postule['numero'] ?></h4>
-
-                    <h4><?= $postule['email'] ?></h4>
-    
-                </td>
-
-            </tr> 
-                <?php endwhile; ?>
-
-        </table>
-</section>
         <div class="btn">
-    
-            <a href="#">Gerer mes candidatures</a>
+        <a href="Mes_candidatures">Gerer mes candidatures</a>
+
         </div>
     <?php else: ?>
     <h3>vous n'avez pas encore postuler a une offre d'emploi</h3>
-    <?php endif; ?>
+<?php endif; ?>
     
 </div>
 <style>
@@ -265,5 +265,67 @@ LIMIT 3 ");
     }
     .oubli:hover{
         text-decoration: underline;
+    }
+
+
+    .listes{
+        display: flex;
+        justify-content: center;
+        
+        
+    }
+    a{
+        text-decoration: none;
+    }
+   .colonne{
+    display: block;
+    
+    width: 100%;
+   }
+    .content{
+        display: flex;
+        
+        background-color: #fff;
+        box-shadow: 2px 2px 2px 2px rgba(0,0,0,.5);
+        padding: 20px;
+        margin: 20px;
+        border-radius: 20px;
+        width: 90%;
+    }
+    .image{
+        width: 140px;
+        height: 140px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }img{
+        width: 130px;
+        height: 130px; 
+        border-radius: 10px;
+    }
+    .details{
+        margin-left: 40px;
+    }
+    .titre{
+       
+        font-size: 25px;
+        color: #04202e;
+        font-weight: 600;
+    }
+    .soustitre{
+        
+        font-size: 15px;
+        color: #04202e;
+        font-weight: 600;
+    }
+    .moyentitre{
+     
+        font-size: 15px;
+        color: #04202e;
+        font-weight: 600;
     }
 </style>

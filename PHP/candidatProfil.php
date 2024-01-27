@@ -178,7 +178,7 @@ $exp_description = isset($_POST['description_exp']) ? array_map(function($value)
         <div style="display: flex; justify-content:space-between;">
         <div style="width: 100%;"  >
         <p class="titre">Intitule du poste:</p>
-        <input style="width: 90%;margin:20px;"  type="text" name="nomPoste[]">
+        <input style="width: 90%;margin:20px;"  type="text" name="nomPost[]">
         </div>
         <div style="width: 100%;"  >
         <p class="titre">Nom de l'entreprise</p>

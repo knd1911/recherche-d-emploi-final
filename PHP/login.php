@@ -11,6 +11,8 @@ if (isset($_POST['submit'])) {
     $pass = sha1(md5($_POST['password']));
     $entrepise = mysqli_query($conn, "SELECT * FROM entreprise where email_entreprise='{$email}'");
     $candidat = mysqli_query($conn, "SELECT * FROM candidat where email = '{$email}'");
+    $admin = mysqli_query($conn, "SELECT * FROM admin where email='{$email}'");
+    
         if(mysqli_num_rows($entrepise) > 0 ){
             $row = mysqli_fetch_assoc($entrepise);
             $bd_pass = $row['password_entreprise'];
@@ -18,7 +20,7 @@ if (isset($_POST['submit'])) {
             //var_dump($pass === $bd_pass);
             session_start();
                 $_SESSION["entreprise"] = $row['id_entreprise'];
-                header('location:entreprise/compte');
+                header('location:/Compte');
             }else{
                 $erreur = 'vos identifiant sont incorrect';
             }
@@ -28,9 +30,19 @@ if (isset($_POST['submit'])) {
             if ($pass === $bd_pass) {
                 session_start();
                 $_SESSION["candidat"] = $row['id_candidat'];
-                header('location:utilisateur/compte');
+                header('location:/compte');
             }else{
                 $erreur = 'vos identifiant sont incorrect';
+            }
+        }elseif(mysqli_num_rows($admin) > 0 ){
+            $row = mysqli_fetch_assoc($admin);
+            $bd_pass = $row['Password'];
+            if ($pass === $bd_pass) {
+                session_start();
+              $_SESSION["admin"] = $row['id_admin'];
+               header('location:PHP/dashboard.php');
+            }else{
+                $erreur = 'mot de passe incorrect';
             }
         }else{
             $erreur = "vos identifiant sont incorrect";
@@ -39,6 +51,18 @@ if (isset($_POST['submit'])) {
 
 
 ?>
+
+<?php if(isset($_SESSION['inscrit'])): ?>
+    <div class="message">
+        <h1>Inscription reussite !! Veuillez vous connecter pour continuer</h1>
+    </div>
+    <?php 
+        if (set_time_limit(10)) {
+            unset($_SESSION['inscrit']);
+        }
+   ?>
+<?php endif; ?>
+
 <div class="form">
 <form action="" method="post">
 <div class="head">
@@ -71,7 +95,14 @@ if (isset($_POST['submit'])) {
 </form>
 </div>
 <style>
-    .form{
+    .message{
+        display: flex;
+        justify-content: center;
+        background-color: greenyellow;
+        margin: 20px;
+        opacity: .8;
+        }
+            .form{
         display: flex;
         justify-content: center;
     }

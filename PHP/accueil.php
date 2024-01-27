@@ -1,20 +1,9 @@
 <?php 
 
 
-function couperPhrase($phrase, $nombreDeMots = 19) {
-    $mots = explode(" ", $phrase);
-    if (count($mots) > $nombreDeMots) {
-        $motsCoupes = array_slice($mots, 0, $nombreDeMots);
-        $phraseCoupée = implode(" ", $motsCoupes);
-        $phraseCoupée .= "...";
+require_once 'PHP/function/couperPhrase.php';
 
-        return $phraseCoupée;
-    } else {
-        return $phrase;
-    }
-}
-
-
+define('PAR_PAGE', 3);
 
 $serveur = "localhost"; 
 $nomUtilisateur = "test";
@@ -24,14 +13,33 @@ $nomBaseDeDonnees = "emploi";
 $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees)
 or die("La connexion à la base de données a échoué : " . mysqli_connect_error());
 
+require_once 'function/compteur_vues.php';
+
+
+incrementerCompteur($conn);
+
 $id = isset($_SESSION['entreprise']) ? (int)$_SESSION['entreprise'] : null;
+
+
+$emploi_count = mysqli_query($conn, "SELECT id_emploi From emploi");
+$count_id = count($emploi_count->fetch_all());
+$count = (int)$count_id;
+$page = (int)($_GET['page'] ?? 1);
+$offset= ($page-1) * PAR_PAGE;
+
+
+$pages = ceil($count / PAR_PAGE);
+
+
+
 
 
 
 $sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
                             from emploi emploi
                             JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
-                            ORDER BY date_publication DESC");
+                            ORDER BY date_publication DESC limit ".PAR_PAGE . " OFFSET $offset");
+
 
 
 ?>
@@ -43,7 +51,7 @@ $sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
                 <a href="/offre/voirPlus?id=<?=$offre['id_emploi']?>" class="content">
                     
                     <div class="image">
-                        <img src="image/<?=$offre['logo_entreprise']?>" alt="">
+                        <img src="image/<?=!empty($offre['image']) ? $offre['image'] : $offre['logo_entreprise']?>" alt="">
                     </div>
                     <div class="details">
                         <p class="titre"> <?=$offre['poste']?> </p>
@@ -56,13 +64,68 @@ $sql = mysqli_query($conn, "SELECT emploi.*, entreprise.*
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
-</div>
 
+    </div>
 
-
+<div class="pagination">
+    <?php if($pages > 1 && $page > 1 ): ?>
+        <div class="pre">
+        <a href="?page=<?= $_GET["page"]=$page - 1?>">Precedent</a>
+        </div>
+    <?php endif; ?>
+    <div class="chiffre">
+    <?php for($i=1; $i<=$pages; $i++ ): ?>
+                <a href="?page=<?=$i?>" <?= $i===$page ? 'class="active"' : '' ?>><?= $i ?></a>
+    <?php endfor; ?>
+    </div>
+    <?php if($pages > 1 && $page < $pages): ?>
+        <div class="sui">
+        <a href="?page=<?=$_GET["page"]=$page + 1?>">Suivant</a>
+        </div>
+    <?php endif; ?>
+    </div>
 
 
 <style>
+    .chiffre a{
+    padding: 10px;
+    color: #04202e;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 20px;
+    text-decoration: underline;
+}
+.chiffre .active{
+    background-color: #f34545;
+    border-radius: 3px;
+    outline: none;
+    border: none;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+        .active{
+        opacity: 1;
+        font-size: 17px;
+        padding: 17px;
+    }
+    .pagination{
+        display: flex;
+        margin: 20px;
+        justify-content: space-around;
+    }
+     .pre a, .sui a{        
+        text-decoration: none;
+        background-color: #f34545;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 20px; 
+        padding: 15px;
+
+    }
      .listes{
         display: flex;
         justify-content: center;

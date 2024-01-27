@@ -9,7 +9,7 @@
 
  $rg = mysqli_query($conn, 'SELECT * from zone_geo');
  $sql = mysqli_query($conn, 'SELECT * from secteur_activite');
- $id = (int)$_SESSION['entreprise'] ?? null;
+ $id = isset($_SESSION['entreprise'])?(int)$_SESSION['entreprise'] : null;
 
  
  function couperPhrase($phrase, $nombreDeMots = 19) {

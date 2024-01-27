@@ -23,6 +23,7 @@
                 $candidat_insert = mysqli_query($conn, "INSERT into candidat (civilite, nom_candidat, prenom, numero, email, password) 
         value('{$civilite}', '{$nom}', '{$prenom}', {$numero}, '{$email}', '{$pass}')");
                 if($candidat_insert){
+                    $_SESSION['inscrit'] = 'reussit';
                     header('location:login');
                 }
             }

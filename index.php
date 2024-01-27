@@ -2,6 +2,7 @@
 ob_start();
 require_once'PHP/function/auth.php';
 est_connect();
+admin_connect();
 $serveur = "localhost"; 
 $nomUtilisateur = "test";
 $motDePasse = "MyP@ssw0rd123";
@@ -15,6 +16,14 @@ $conn = mysqli_connect($serveur, $nomUtilisateur, $motDePasse, $nomBaseDeDonnees
 
 $requestUri = $_SERVER["REQUEST_URI"];
 $getUri = $_GET;
+
+/*
+$vue_select = mysqli_query($conn, "SELECT * FROM vues");
+$vue_totals = $vue_select->fetch_assoc();
+$vue_total = $vue_totals['vues_total'];
+$vue_id = $vue_totals['id'];*/
+
+
 
 function route($requestUri) {
     $path = strtok($requestUri, '?');
@@ -52,12 +61,18 @@ function route($requestUri) {
                 case '/offre/login':
                   include('PHP/location/login.php');
                   break;
+                  case '/PHP/login':
+                    include('PHP/location/login.php');
+                    break;
                   case '/offre/voirPlus/login':
                     include('PHP/location/login.php');
                     break;
         case '/login':
             include('PHP/login.php');
             break;
+            case '/admin/login':
+              include('PHP/login copy.php');
+              break;
         case '/oublier':
             include('PHP/MotDePasseOublier.php');
             break;
@@ -91,15 +106,24 @@ function route($requestUri) {
               case '/offre/deconnecte':
                 include('PHP/location/logout.php');
                 break;
+                case '/gestion/deconnecte':
+                  include('PHP/location/logout.php');
+                  break;
                 case '/offre/voirPlus/deconnecte':
                   include('PHP/location/logout.php');
                   break;
             case '/deconnecte':
               include('PHP/location/logout.php');
               break;
+              case 'phpcandidatures/deconnecte':
+                include('PHP/location/logout.php');
+                break;
               case '/gestion/annonce/deconnecte':
                 include('PHP/location/logout.php');
                 break;
+                case '/Compte':
+                  include('PHP/compteEntreprise.php');
+                  break;
               case '/entreprise/compte':
                 include('PHP/compteEntreprise.php');
                 break;
@@ -136,9 +160,28 @@ function route($requestUri) {
                         case '/offre/voirPlus':
                           include('PHP/voirPlus.php');
                           break; 
+                          case '/candidatures/Profil':
+                            include('PHP/voirProfil.php');
+                            break; 
+                            case '/Profil':
+                              include('PHP/voirProfil.php');
+                              break;
                           case '/postuler':
                             include('PHP/postule.php');
                             break; 
+                            case '/Mes_candidatures':
+                              include('PHP/MesCandidatures.php');
+                              break; 
+                              case '/gestion/candidature':
+                                include('PHP/location/candidatures.php');
+                                break; 
+                                case '/candidature':
+                                  include('PHP/candidatures.php');
+                                  break; 
+                                  case '/dash':
+                                    include('PHP/location/dash.php');
+                                    break;
+                
               
 
 
@@ -154,7 +197,6 @@ $contenu = ob_get_clean();
 
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -165,31 +207,9 @@ $contenu = ob_get_clean();
 </head>
 <body>
 <nav>
-<ul>
-  <li><a href="/">Home</a></li>
-  <li><a href="/recherche">Rechercher un emploie</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li style="float:right">
-    <ul>
-    <?php if(!est_connect()):?>
-        <li><a href="inscription">S'incrire</a></li>
-        <li><a href="login">Se connecter</a></li>
-    <?php endif; ?>
-    <?php if(est_connect()):?>
-        <li>
-          <?php if(isset($_SESSION["candidat"])): ?>
-          <a href="compte">compte</a></li>
-          <?php elseif(isset($_SESSION["entreprise"])) :?>
-            <li>
-            <a class="sub-btn" href="/gestion/annonce/publier">Publier une offre</a></li>
-            <li>
-          <a href="entreprise/compte">compte</a></li>
-          <?php endif; ?>
-        <li><a href="deconnecte">Se deconnecter</a></li>
-    <?php endif; ?>
-    </ul>
-    </li>
-</ul>
+
+  <?php require_once 'PHP/function/header.php';  ?>
+
 </nav>
 
 
@@ -253,7 +273,14 @@ nav ul {
     color: #fff;
     font-weight: 800;
   }
+  .active{
+    
+    
 
+    font-size: 20px;
+    font-weight: 600;
+    color: #04202e;
+  }
   footer {
     background-color: #fff;
     padding: 10px;

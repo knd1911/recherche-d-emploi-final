@@ -24,7 +24,7 @@ JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
 WHERE id_emploi = {$id}");
 
 $entreprise = $entreprises->fetch_assoc();
-$id_entreprise = isset($_SESSION['entreprise']) ? (int)$_SESSION['entreprise'] : null;
+$id_entreprise = $entreprise['id_entreprise'];
 $id_candidat = isset($_SESSION['candidat']) ? (int)$_SESSION['candidat'] : null;
 
 if (isset($_POST["envoyer"])) {
@@ -33,12 +33,12 @@ if (isset($_POST["envoyer"])) {
     if (mysqli_num_rows($deja)>0) {
         $erreur = "Vous ne pouvez pas postuler a cette offre d'emploi car vous avez deja postuler";
     } elseif ($_FILES['cv']['type'] == 'application/pdf') {
-            $nomFichier = basename($_FILES['cv']['name']);
+            $nomFichier = basename(mysqli_real_escape_string($conn, $_FILES['cv']['name']));
             $tmp_name = $_FILES['cv']['tmp_name'];
             $deplace = move_uploaded_file($tmp_name, "CV/" . $nomFichier);
             if ($deplace) {
                     $insert = mysqli_query($conn, "INSERT INTO postuler(id_emploi, id_candidat, id_entreprise, cv)
-                    VALUES({$id}, {$id_candidat}, {$id_entreprise}, '{$nomFichier}')");
+                    VALUES({$id}, {$id_candidat},{$id_entreprise}, '{$nomFichier}')");
                 }
             } else {
                 $erreur = "Erreur lors du téléversement du fichier.";
@@ -122,7 +122,6 @@ if (isset($_POST["envoyer"])) {
     <div id="modal" class="border">
         <h2>Poste : <?=  $entreprise['poste'] ?></h2>
         <form action="" method="post" enctype="multipart/form-data">
-            <!-- Ajoutez vos champs de formulaire ici -->
             <div class="input">
             <p class="titre">Télécharger votre CV</p>
             <input type="file" name="cv" accept=".pdf" required>

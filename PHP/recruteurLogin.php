@@ -51,6 +51,7 @@
                         VALUES('{$nom_ent}', '{$adresse}', '{$email}', '{$pass}', '{$img_name}', '{$site}', '{$ville}', {$code_poste}, '{$nom}', '{$prenom}', '{$poste}', {$numero}) ";
                     $entrepise_insert = mysqli_query($conn, $select);
                         if($entrepise_insert){
+                         $_SESSION['inscrit'] = 'reussit';
                             header('location:login');
                         }
                     }

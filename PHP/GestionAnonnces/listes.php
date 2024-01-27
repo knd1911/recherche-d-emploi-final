@@ -19,22 +19,19 @@ JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
 WHERE entreprise.id_entreprise = {$id}
 ORDER BY emploi.date_publication DESC;");
 
+if (isset($_GET['sup'])) {
+    $id_sup = (int)$_GET['sup'];
+    $del = mysqli_query($conn, "DELETE FROM emploi WHERE id_emploi = $id_sup");
+}
 
 
 ?>
 <div class="listes">
     <div class="side-bar">
             <div class="menu">
-        <div class="item"><a href="#"><i class="fas fa-desktop"></i>Gestion des annonces</a></div>
         <div class="item">
             <a class="sub-btn" href="/gestion/annonce/publier">Publier une offre</a>
         </div>
-        <div class="item"><a href="#"><i class="fas fa-th"></i>Gerer les candidatures</a></div>
-        <div class="item">
-            <a class="sub-btn"><i class="fas fa-cogs"></i>Settings<i class="fas fa-angle-right dropdown"></i></a>
-
-        </div>
-        <div class="item"><a href="#"><i class="fas fa-info-circle"></i>About</a></div>
         </div>
     </div>
     <div class="content">
@@ -50,15 +47,15 @@ ORDER BY emploi.date_publication DESC;");
             <?php if(mysqli_num_rows($sql)>0):  ?>
                 <?php while($row = $sql->fetch_assoc()): ?>
             <tr>
-                <td> <img  src="../image/<?= $row['logo_entreprise'] ?>"> </td>
+                <td> <img  src="../image/<?= $row['image'] ? $row['image'] : $row['logo_entreprise'] ?>"> </td>
                 <td>
                     <h3><?= $row['poste'] ?></h3>
                     <h4><?= $row['date_publication'] ?></h4>
                     <h4><?=$row['views'] ?> vue(s)</h4>
                 </td>
                 <td>
-                    <h3><a href="annonce/modifier?id=<?=$row['id_emploi']?>">Modifier</a></h3>
-                    <h3><a href="gestion/offre/supprimer">Modifier</a></h3>
+                    <h3><a href="/candidature?id=<?=$row['id_emploi']?>">Candidatures</a></h3>
+                    <h3><a href="?sup=<?= $row['id_emploi'] ?>">Supprimer</a></h3>
                     <h3><a href="/offre/voirPlus?id=<?=$row['id_emploi']?>">voir Plus</a></h3>
                 </td>
             </tr> 
@@ -76,8 +73,42 @@ ORDER BY emploi.date_publication DESC;");
 </section>
     </div>
 </div>
+<div id="modal" class="border">
+        <form action="" method="post">
+            <p class="titre">Voulez vous vraiment supprimer cet offre d'emploi</p>
 
+            <div class="btns">
+            <input type="submit" name="oui" value="Oui">
+            <button onclick="fermerModal()">Non</button>
+            </div>
+        </form>
+        
+    </div>
+
+
+
+    <script>
+        function afficherModal() {
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function fermerModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+    </script>
 <style>
+     #modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding: 20px;
+            z-index: 1000;
+            border-radius: 5px;
+        }
     .listes{
         display: flex;
         justify-content: center;
@@ -100,7 +131,7 @@ ORDER BY emploi.date_publication DESC;");
         border-radius: 20px;
         position: fixed;
         left: 0;
-        height: 200px;
+        
     }
     table{
     border-collapse: collapse;
@@ -145,7 +176,6 @@ img{
 
  background: #fff;
  width: 250px;
- height: 70%;
  position: fixed;
  left: 0;
  top: 100px;

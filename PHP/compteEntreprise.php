@@ -6,6 +6,7 @@ require_once 'PHP/config/config.php';
 $entreprises = mysqli_query($conn, "SELECT * FROM entreprise where id_entreprise = {$id}");
 $entreprise = $entreprises->fetch_assoc();
 
+require_once'PHP/function/couperPhrase.php';
 
 
    
@@ -15,13 +16,14 @@ FROM emploi
 JOIN entreprise ON emploi.id_entreprise = entreprise.id_entreprise
 WHERE entreprise.id_entreprise = {$id}
 ORDER BY date_publication DESC
-LIMIT 3 ");
+LIMIT 3");
 
-$postuler = mysqli_query($conn, "SELECT candidat.*, postuler.*
+$postuler = mysqli_query($conn, "SELECT candidat.*, postuler.*, emploi.*
 FROM postuler
 JOIN candidat ON postuler.id_candidat = candidat.id_candidat
-WHERE id_entreprise = {$id}
-ORDER BY date_publication DESC
+JOIN emploi ON postuler.id_emploi = emploi.id_emploi
+WHERE postuler.id_entreprise = {$id}
+ORDER BY postuler.date_publication DESC
 LIMIT 3 ");
 
 
@@ -48,93 +50,104 @@ LIMIT 3 ");
     </div>
     </div>
 </div>    
+<?php if (mysqli_num_rows($sql)>0):  ?>
 <div class="border">
     <div class="head">
         <h3>Mes dernierres annonces</h3>
     </div>
-    <section>
-    <table>
-            <tr>
-                
-                
-                <th>Logo</th>
-                <th>detaille sur l'offres d'emploi</th>
+    <div class="listes">
+  
+        <div class="colonne">
+            <?php foreach($sql as $offre) : ?>
 
-            </tr>
-            <?php if(mysqli_num_rows($sql)>0):  ?>
-                <?php while($row = $sql->fetch_assoc()): ?>
-            <tr>
-                <td> <img  src="../image/<?= $row['logo_entreprise'] ?>"> </td>
-                <td>
-                    <h3><?= $row['poste'] ?></h3>
-                    <h4><?= $row['date_publication'] ?></h4>
-                    <h4><?= $row['competence'] ?></h4>
-                    <h4><?= $row['views'] ?> vue(5) </h4>
-                </td>
+                <a href="/offre/voirPlus?id=<?=$offre['id_emploi']?>" class="content">
+                    
+                    <div class="image">
+                        <img src="image/<?=!empty($offre['image']) ? $offre['image'] : $offre['logo_entreprise']?>" alt="">
+                    </div>
+                    <div class="details">
+                        <p class="titre"> <?=$offre['poste']?> </p>
+                        <p class="soustitre">
+                            <?= $offre['date_publication'] ." | ". $offre['nom_entreprise'] ?>
 
-            </tr> 
-                <?php endwhile; ?>
-            <?php endif; ?>
-            <?php if(mysqli_num_rows($sql)==0):  ?>
-                <tr>
-                    <td>
-                <h3 >Vous n'avez pas encore poster une offre d'emploi</h3>
+                        </p>
+                        <p class="moyentitre">Description : <?=  couperPhrase($offre['Description'])?></p>
+                        <p class="moyentitre">Competences : <?= couperPhrase($offre['competence'])?></p>
+                        <p class="moyentitre">Localite : <?= $offre['localite']?></p>
+    <h4><?= $offre['views'] ?> vue<?= $offre['views'] >1 ? 's' : ''  ?> </h4>
 
-                    </td>
-                </tr>
-            <?php endif; ?>
-        </table>
-</section>
-
-    <div class="btn">
-    
+                    </div>
+                </a>
+            <?php endforeach; ?>
         </div>
+       
+   
+
+    </div>
+            <div class="btn">
+            <a href="gestion/annonce">Gerer mes offres d'emploi</a>
+            </div> 
 </div>
+<?php endif; ?>
+<?php if(mysqli_num_rows($sql)==0):  ?> 
+<div class="border">
+    <div class="head"><h3>Mes dernieres annonces</h3></div>
+    
+                <h3 >Vous n'avez pas encore poster une offre d'emploi</h3>
+                <div class="btn">
+            <a class="sub-btn" href="/gestion/annonce/publier">Publier une offre</a>
+        </div>
+           
+</div>
+<?php endif; ?> 
+<?php if ((mysqli_num_rows($sql)>0 ) && (mysqli_num_rows($postuler) >0)):  ?>
 <div class="border">
     <div class="head">
-        <h3>Les dernierres candidatures</h3>
+        <h3>Mes dernierres candidatures recues</h3>
     </div>
-    <section>
-    <table>
-            <tr>
+    <div class="listes">
+  
+        <div class="use">
+            <?php foreach($postuler as $postule) : ?>
+
+                <div class="contents">
+                    
+                    <div class="images">
+                        <img src="/image/<?=$postule['image']?>" alt="">
+                    </div>
+                    <div class="details">
+                        <h3>Poste : <?=$postule['poste']?> </h3>
+                        <p class="soustitre">
+                            <?= $postule['date_publication']?>
+
+                        </p>
+                        <p class="moyentitre">Nom : <?= $postule['nom_candidat']?></p>
+                        <p class="moyentitre">Prenom : <?=$postule['prenom']?></p>
+                        <p class="moyentitre">Numero : <?= $postule['numero']?></p>
+                        <p class="moyentitre">Email : <?= $postule['email']?></p>
+                    </div>
+                    <div class="btn">
+                    <a href="Profil?id=<?=$postule['id_candidat']?>">Voir le profil</a>
+                </div>
+                </div>
                 
-                
-                <th>Photo</th>
-                <th>Nom et Prenom</th>
+            <?php endforeach; ?>
+        </div>
+       
+   
 
-            </tr>
-            <?php if(mysqli_num_rows($postuler)>0):  ?>
-                <?php while($postule = $postuler->fetch_assoc()): ?>
-            <tr>
-                <td> <img  src="../image/<?= $postule['image'] ?>"> </td>
-                <td>
-                    <h3><?= $postule['nom_candidat'] ." ". $postule['prenom'] ?></h3>
-                    <h4><?= $postule['numero'] ?></h4>
-
-                    <h4><?= $postule['email'] ?></h4>
-    
-                </td>
-
-            </tr> 
-                <?php endwhile; ?>
-
-            <?php endif; ?>
-            <?php if(mysqli_num_rows($sql)==0):  ?>
-                <tr>
-                    <td>
-                <h3 >Vous n'avez pas encore poster une offre d'emploi</h3>
-
-                    </td>
-                </tr>
-            <?php endif; ?>
-
-        </table>
-</section>
-            <div class="btn">
-            <a href="gestion/annonce">Gerer</a>
-            </div>
-
+    </div>
+            
 </div>
+<?php endif; ?>
+<?php if((mysqli_num_rows($sql)>0) && (mysqli_num_rows($postuler)==0)):  ?> 
+<div class="border">
+    <div class="head"><h3>Mes dernierres candidatures recues</h3></div>
+    
+                <h3 >Vous n'avez pas encore recus de candidatures</h3>
+           
+</div>
+<?php endif; ?>
 <style>
         table{
     border-collapse: collapse;
@@ -266,5 +279,101 @@ tr:nth-child(even) {
     }
     .oubli:hover{
         text-decoration: underline;
+    }
+
+
+    .listes{
+        display: flex;
+        justify-content: center;
+        background-color: #999;
+        border-radius: 20px;
+        
+        
+    }
+    a{
+        text-decoration: none;
+    }
+   .colonne{
+    display: block;
+    
+    width: 100%;
+   }
+   .use{
+    display: flex;
+    
+    width: 100%;
+   }
+    .content{
+        display: flex;
+        
+        background-color: #fff;
+        box-shadow: 2px 2px 2px 2px rgba(0,0,0,.5);
+        padding: 20px;
+        margin: 20px;
+        border-radius: 20px;
+        width: 90%;
+    }
+
+    .contents{
+        display: block;
+        
+        background-color: #fff;
+        box-shadow: 2px 2px 2px 2px rgba(0,0,0,.5);
+        padding: 20px;
+        margin: 20px;
+        border-radius: 20px;
+        width: 90%;
+    }
+    .images{
+        width: 280px;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }.images img{
+        width: 275px;
+        height: 250px; 
+        border-radius: 10px;
+    }
+
+    .image{
+        width: 140px;
+        height: 140px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }img{
+        width: 130px;
+        height: 130px; 
+        border-radius: 10px;
+    }
+    .details{
+        margin-left: 40px;
+    }
+    .titre{
+       
+        font-size: 25px;
+        color: #04202e;
+        font-weight: 600;
+    }
+    .soustitre{
+        
+        font-size: 15px;
+        color: #04202e;
+        font-weight: 600;
+    }
+    .moyentitre{
+     
+        font-size: 15px;
+        color: #04202e;
+        font-weight: 600;
     }
 </style>
